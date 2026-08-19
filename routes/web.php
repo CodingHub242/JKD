@@ -13,6 +13,16 @@ use Illuminate\Support\Facades\Route;
 /* ----------------------------- Public site ----------------------------- */
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+Route::get('/check',function(){
+try {
+        Artisan::call('storage:link');
+        return response()->json(['message' => 'Storage link created successfully!'], 200);
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Failed to create storage link: ' . $e->getMessage()], 500);
+    }
+});
+
+
 Route::get('/services', [PageController::class, 'services'])->name('services');
 Route::get('/projects', [PageController::class, 'projects'])->name('projects');
 Route::get('/projects/{slug}', [PageController::class, 'projectShow'])->name('projects.show');
