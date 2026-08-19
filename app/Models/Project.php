@@ -41,7 +41,7 @@ class Project extends Model
 
     public function clients(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'client_project')
+        return $this->belongsToMany(User::class, 'client_project', 'client_id', 'project_id')
             ->withTimestamps();
     }
 
