@@ -16,8 +16,8 @@
 
     {{-- Preloader --}}
     <div id="preloader" aria-hidden="true">
-        <div class="preloader__mark">Welcome to JKD PINNacle</div>
-        <div class="preloader__sub">Building Excellence</div>
+        <div class="preloader__mark">{{ $site['loading_text'] ?? 'Welcome to JKD PINNacle' }}</div>
+        <div class="preloader__sub">{{ $site['loading_subtext'] ?? 'Building Excellence' }}</div>
         <div class="preloader__bar"><span></span></div>
     </div>
 
@@ -31,7 +31,7 @@
         <nav class="container-x flex h-20 items-center justify-between">
             <a href="{{ url('/') }}" class="flex items-center gap-2 font-display text-lg font-bold tracking-tight text-white">
                 <span class="grid h-9 w-9 place-items-center rounded-lg bg-brand-500 text-ink-950">J</span>
-                <span>JKD <span class="text-brand-400">PINNacle</span></span>
+                <span>{{ $site['company_name'] ?? 'JKD PINNacle' }}</span>
             </a>
 
             <div class="hidden items-center gap-8 lg:flex">
@@ -90,10 +90,10 @@
             <div>
                 <a href="{{ url('/') }}" class="flex items-center gap-2 font-display text-lg font-bold text-white">
                     <span class="grid h-9 w-9 place-items-center rounded-lg bg-brand-500 text-ink-950">J</span>
-                    <span>JKD <span class="text-brand-400">PINNacle</span></span>
+                    <span>{{ $site['company_name'] ?? 'JKD PINNacle' }}</span>
                 </a>
                 <p class="mt-4 max-w-xs text-sm text-ink-300">
-                    World-class construction, design and build solutions delivered with precision and pride.
+                    {{ $site['company_description'] ?? 'World-class construction, design and build solutions delivered with precision and pride.' }}
                 </p>
             </div>
 
@@ -120,10 +120,17 @@
             <div>
                 <h4 class="text-sm font-semibold uppercase tracking-wider text-white">Get in touch</h4>
                 <ul class="mt-4 space-y-2 text-sm text-ink-300">
-                    <li>hello@jkdpinnacle.com</li>
-                    <li>+233 00 000 0000</li>
-                    <li>Accra, Ghana</li>
+                    <li><a href="mailto:{{ $site['company_email'] ?? '' }}" class="footer-link">{{ $site['company_email'] ?? '' }}</a></li>
+                    <li><a href="tel:{{ $site['company_phone'] ?? '' }}" class="footer-link">{{ $site['company_phone'] ?? '' }}</a></li>
+                    <li>{{ $site['company_address'] ?? '' }}</li>
                 </ul>
+                <div class="mt-4 flex flex-wrap gap-2">
+                    @if(!empty($site['social_facebook']))<a href="{{ $site['social_facebook'] }}" target="_blank" rel="noopener" class="grid h-9 w-9 place-items-center rounded-lg border border-white/10 text-ink-300 transition-colors hover:border-brand-400 hover:text-brand-300" aria-label="Facebook">FB</a>@endif
+                    @if(!empty($site['social_instagram']))<a href="{{ $site['social_instagram'] }}" target="_blank" rel="noopener" class="grid h-9 w-9 place-items-center rounded-lg border border-white/10 text-ink-300 transition-colors hover:border-brand-400 hover:text-brand-300" aria-label="Instagram">IG</a>@endif
+                    @if(!empty($site['social_linkedin']))<a href="{{ $site['social_linkedin'] }}" target="_blank" rel="noopener" class="grid h-9 w-9 place-items-center rounded-lg border border-white/10 text-ink-300 transition-colors hover:border-brand-400 hover:text-brand-300" aria-label="LinkedIn">IN</a>@endif
+                    @if(!empty($site['social_twitter']))<a href="{{ $site['social_twitter'] }}" target="_blank" rel="noopener" class="grid h-9 w-9 place-items-center rounded-lg border border-white/10 text-ink-300 transition-colors hover:border-brand-400 hover:text-brand-300" aria-label="Twitter">X</a>@endif
+                    @if(!empty($site['social_youtube']))<a href="{{ $site['social_youtube'] }}" target="_blank" rel="noopener" class="grid h-9 w-9 place-items-center rounded-lg border border-white/10 text-ink-300 transition-colors hover:border-brand-400 hover:text-brand-300" aria-label="YouTube">YT</a>@endif
+                </div>
             </div>
         </div>
         <div class="border-t border-white/5">
