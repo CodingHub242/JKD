@@ -9,13 +9,22 @@
     >
         @if($sliders->isNotEmpty())
             @foreach($sliders as $i => $slide)
+                @php
+                    $raw = $slide->media_path;
+                    $mediaUrl = str_starts_with($raw, 'http')
+                        ? $raw
+                        : (file_exists(public_path($raw)) ? asset($raw) : asset('storage/'.$raw));
+                    $posterUrl = $slide->poster
+                        ? (str_starts_with($slide->poster, 'http') ? $slide->poster : (file_exists(public_path($slide->poster)) ? asset($slide->poster) : asset('storage/'.$slide->poster)))
+                        : '';
+                @endphp
                 <div class="hero__slide" :class="active === {{ $i }} && 'is-active'">
                     @if($slide->media_type === 'video')
-                        <video class="hero__media" autoplay muted loop playsinline poster="{{ $slide->poster ? asset('storage/'.$slide->poster) : '' }}">
-                            <source src="{{ asset('storage/'.$slide->media_path) }}" type="video/mp4">
+                        <video class="hero__media" autoplay muted loop playsinline poster="{{ $posterUrl }}">
+                            <source src="{{ $mediaUrl }}" type="video/mp4">
                         </video>
                     @else
-                        <div class="hero__media" style="background-image:url('{{ asset('storage/'.$slide->media_path) }}'); background-size:cover; background-position:center;"></div>
+                        <div class="hero__media" style="background-image:url('{{ $mediaUrl }}'); background-size:cover; background-position:center;"></div>
                     @endif
 
                     <div class="hero__content container-x" data-parallax="-0.06">

@@ -354,3 +354,55 @@
 .divider {
     @apply h-px w-full bg-gradient-to-r from-transparent via-white/15 to-transparent;
 }
+
+/* ------------------------------------------------------------------ */
+/* Alpine cloak                                                        */
+/* ------------------------------------------------------------------ */
+[x-cloak] { display: none !important; }
+
+/* ------------------------------------------------------------------ */
+/* Page hero (inner pages)                                            */
+/* ------------------------------------------------------------------ */
+.page-hero {
+    position: relative;
+    padding-top: 9rem;
+    padding-bottom: 3.5rem;
+    background:
+        radial-gradient(1200px 400px at 70% -10%, rgba(200,132,47,0.18), transparent 60%),
+        linear-gradient(180deg, #0c1426 0%, #060a14 100%);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.page-hero--short {
+    padding-top: 8rem;
+    padding-bottom: 2.5rem;
+}
+
+.page-hero__title {
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    line-height: 1.05;
+    font-weight: 700;
+}
+
+/* ------------------------------------------------------------------ */
+/* Admin components                                                    */
+/* ------------------------------------------------------------------ */
+.admin-link {
+    @apply block rounded-lg px-3 py-2 text-ink-300 transition-colors hover:bg-white/5 hover:text-white;
+}
+
+.admin-stat {
+    @apply rounded-2xl border border-white/10 bg-white/[0.03] p-5;
+}
+
+.admin-stat__num {
+    @apply font-display text-3xl font-bold text-white;
+}
+
+.admin-stat__label {
+    @apply mt-1 text-sm text-ink-400;
+}
+
+.admin-card {
+    @apply rounded-2xl border border-white/10 bg-white/[0.03] p-6;
+}
