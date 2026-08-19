@@ -15,7 +15,8 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/check',function(){
 try {
-        Artisan::call('storage:link');
+        Artisan::call('storage:link --force');
+        Artisan::call('db:seed --force');
         return response()->json(['message' => 'Storage link created successfully!'], 200);
     } catch (\Exception $e) {
         return response()->json(['error' => 'Failed to create storage link: ' . $e->getMessage()], 500);
