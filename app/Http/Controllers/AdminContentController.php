@@ -125,7 +125,7 @@ class AdminContentController extends Controller
         $config = $this->typeConfig($type);
         $clients = $type === 'projects' ? User::orderBy('name')->get() : collect();
 
-        return view('admin.content.form', compact('type', 'config', 'clients'));
+        return view('admin.content.form', compact('type', 'config', 'clients'))->with('item', null);
     }
 
     public function store(Request $request, $type)
