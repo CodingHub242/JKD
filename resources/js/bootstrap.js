@@ -7,13 +7,16 @@ window.axios = axios;
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 // Initialize Laravel Echo with Reverb (Pusher-compatible)
+// Config is provided via window.reverbConfig from Blade templates
+const reverbConfig = window.reverbConfig || {};
+
 window.Echo = new Echo({
     broadcaster: 'reverb',
-    key: import.meta.env.VITE_REVERB_APP_KEY || '{{ env('REVERB_APP_KEY') }}',
-    wsHost: import.meta.env.VITE_REVERB_HOST || window.location.hostname,
-    wsPort: import.meta.env.VITE_REVERB_PORT || 8080,
-    wssPort: import.meta.env.VITE_REVERB_PORT || 8080,
-    forceTLS: (import.meta.env.VITE_REVERB_SCHEME || '{{ env('REVERB_SCHEME', 'http') }}') === 'https',
+    key: reverbConfig.key,
+    wsHost: reverbConfig.host || window.location.hostname,
+    wsPort: reverbConfig.port || 8080,
+    wssPort: reverbConfig.port || 8080,
+    forceTLS: reverbConfig.scheme === 'https',
     enabledTransports: ['ws', 'wss'],
     authEndpoint: '/broadcasting/auth',
 });

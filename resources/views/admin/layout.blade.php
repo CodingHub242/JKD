@@ -82,6 +82,14 @@
 
     @if(Auth::check() && Auth::user()->is_admin)
     <script>
+        window.reverbConfig = {
+            key: '{{ env('REVERB_APP_KEY') }}',
+            host: '{{ env('REVERB_HOST', 'localhost') }}',
+            port: {{ env('REVERB_PORT', 8080) }},
+            scheme: '{{ env('REVERB_SCHEME', 'http') }}',
+        };
+    </script>
+    <script>
         document.addEventListener('alpine:init', () => {
             // Listen for new submissions
             window.Echo.private('admin.submissions')

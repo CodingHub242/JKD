@@ -12,6 +12,7 @@ use App\Models\Contact;
 use App\Models\SiteVisit;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class AdminController extends Controller
 {
@@ -97,6 +98,10 @@ class AdminController extends Controller
         foreach ($data as $key => $value) {
             Setting::setValue($key, $value ?? '');
         }
+
+        // Clear cached settings to ensure fresh data is loaded
+        Cache::forget('settings.all');
+        Cache::forget('site.settings');
 
         return redirect()->route('admin.settings')->with('success', 'Settings saved.');
     }
