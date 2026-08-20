@@ -2,16 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ChatJob;
 use App\Models\Conversation;
 use App\Models\Message;
-use App\Services\ArkeselSmsService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\URL;
 
 class ChatController extends Controller
 {
-    public function __construct(protected ArkeselSmsService $sms) {}
-
     public function start(Request $request)
     {
         $data = $request->validate([
@@ -32,9 +29,8 @@ class ChatController extends Controller
             'body' => $data['message'],
         ]);
 
-        // Send SMS to admin with direct chat link
-        $chatUrl = URL::to('/admin/chat/' . $conversation->id);
-        $this->notifyAdmin("New live chat from {$conversation->name}. Open chat: {$chatUrl}");
+        // Dispatch background job for SMS notification
+        ChatJob::dispatch($conversation->id, $data['message'], 'visitor');
 
         return response()->json(['ok' => true, 'conversation_id' => $conversation->id]);
     }
@@ -55,9 +51,8 @@ class ChatController extends Controller
 
         $conversation->update(['last_activity_at' => now()]);
 
-        // Send SMS to admin on every new visitor message
-        $chatUrl = URL::to('/admin/chat/' . $conversation->id);
-        $this->notifyAdmin("New message from {$conversation->name}: {$message->body}. Open chat: {$chatUrl}");
+        // Dispatch background job for SMS notification
+        ChatJob::dispatch($conversation->id, $message->body, 'visitor');
 
         return response()->json(['ok' => true, 'message' => ['id' => $message->id, 'body' => $message->body, 'sender_type' => 'visitor']]);
     }
