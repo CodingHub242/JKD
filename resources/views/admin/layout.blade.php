@@ -43,15 +43,18 @@
                 <p class="px-3 pt-4 text-xs uppercase tracking-wider text-ink-500">Tools</p>
                 <a href="{{ route('admin.chat.index') }}" class="admin-link">Live Chat</a>
                 <a href="{{ route('admin.settings') }}" class="admin-link">Settings</a>
-            </nav>
+                
 
-            <div class="absolute bottom-4 left-4 right-4 space-y-3">
+                <div class="absolute bottom-4 left-4 right-4 space-y-3">
                 <a href="{{ url('/') }}" target="_blank" class="admin-link">View Site &rarr;</a>
                 <form action="{{ route('admin.logout') }}" method="POST">
                     @csrf
                     <button type="submit" class="admin-link w-full text-left">Log Out</button>
                 </form>
             </div>
+            </nav>
+
+            
         </aside>
 
         @if(session('success'))
