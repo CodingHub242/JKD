@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminContentController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminSubmissionController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\PageController;
@@ -29,9 +30,10 @@ Route::post('/meetings', [InquiryController::class, 'storeMeeting'])->name('inqu
 Route::post('/careers', [InquiryController::class, 'storeApplication'])->name('inquiry.application');
 
 /* ----------------------------- Live chat (public) ----------------------------- */
-Route::post('/chat/start', [InquiryController::class, 'chatStart'])->name('chat.start');
-Route::post('/chat/send', [InquiryController::class, 'chatSend'])->name('chat.send');
-Route::get('/chat/messages', [InquiryController::class, 'chatMessages'])->name('chat.messages');
+Route::post('/chat/start', [ChatController::class, 'start'])->name('chat.start');
+Route::post('/chat/send', [ChatController::class, 'send'])->name('chat.send');
+Route::get('/chat/messages/{id}', [ChatController::class, 'messages'])->name('chat.messages');
+Route::post('/chat/typing', [ChatController::class, 'typing'])->name('chat.typing');
 
 /* ----------------------------- Auth ----------------------------- */
 Route::get('/admin/login', [AuthController::class, 'showAdminLogin'])->name('admin.login');
@@ -80,4 +82,6 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/chat/{id}', [AdminSubmissionController::class, 'chatShow'])->name('chat.show');
     Route::post('/chat/{id}/reply', [AdminSubmissionController::class, 'chatReply'])->name('chat.reply');
     Route::get('/chat/{id}/messages', [AdminSubmissionController::class, 'chatMessages'])->name('chat.messages');
+    Route::post('/chat/{id}/agent-join', [ChatController::class, 'agentJoin'])->name('chat.agent-join');
+    Route::post('/chat/{id}/agent-leave', [ChatController::class, 'agentLeave'])->name('chat.agent-leave');
 });

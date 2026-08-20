@@ -149,7 +149,11 @@
 
         <div x-show="open" @click.outside="open = false" class="flex h-[28rem] w-[22rem] max-w-[calc(100vw-2.5rem)] flex-col overflow-hidden rounded-2xl border border-white/10 bg-ink-900 shadow-2xl">
             <div class="flex items-center justify-between bg-brand-500 px-4 py-3 text-ink-950">
-                <span class="font-semibold">Live Chat</span>
+                <div>
+                    <span class="font-semibold">Live Chat</span>
+                    <div x-show="agentJoined" class="text-xs opacity-80">Agent joined the chat</div>
+                    <div x-show="agentTyping" class="text-xs opacity-80">Agent is typing...</div>
+                </div>
                 <button @click="open = false" class="text-ink-950/70 hover:text-ink-950">&times;</button>
             </div>
 
@@ -169,7 +173,7 @@
                 </div>
                 <form @submit.prevent="send">
                     <div class="flex gap-2">
-                        <input type="text" x-model="message" placeholder="Type a message..." class="field py-2 text-sm" :disabled="sending">
+                        <input type="text" x-model="message" @input.debounce.300ms="onTyping" placeholder="Type a message..." class="field py-2 text-sm" :disabled="sending">
                         <button type="submit" class="btn-primary btn px-4 py-2" :disabled="sending">Send</button>
                     </div>
                 </form>
@@ -178,61 +182,5 @@
     </div>
 
     @stack('scripts')
-
-    <script>
-    document.addEventListener('alpine:init', () => {
-        Alpine.data('chatWidget', () => ({
-            open: false,
-            name: '',
-            email: '',
-            message: '',
-            messages: [],
-            lastId: 0,
-            started: false,
-            sending: false,
-            init() {
-                this.poll();
-                setInterval(() => this.poll(), 3000);
-            },
-            async poll() {
-                try {
-                    const res = await fetch('{{ route('chat.messages') }}', { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
-                    const data = await res.json();
-                    if (data.ok && data.messages.length) {
-                        data.messages.forEach(m => this.messages.push(m));
-                        this.lastId = data.messages[data.messages.length - 1].id;
-                        this.$nextTick(() => { const el = document.getElementById('chat-log'); if (el) el.scrollTop = el.scrollHeight; });
-                    }
-                } catch (e) {}
-            },
-            async send() {
-                if (!this.message.trim()) return;
-                this.sending = true;
-                const payload = { message: this.message };
-                let url = '{{ route('chat.send') }}';
-                if (!this.started) {
-                    if (!this.name.trim()) { alert('Please enter your name to start the chat.'); this.sending = false; return; }
-                    url = '{{ route('chat.start') }}';
-                    payload.name = this.name;
-                    payload.email = this.email;
-                }
-                try {
-                    const res = await fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    const data = await res.json();
-                    if (data.ok) {
-                        this.started = true;
-                        this.message = '';
-                        this.poll();
-                    }
-                } catch (e) {}
-                this.sending = false;
-            }
-        }));
-    });
-</script>
 </body>
 </html>

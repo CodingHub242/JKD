@@ -13,10 +13,16 @@ class Conversation extends Model
         'phone',
         'status',
         'last_activity_at',
+        'agent_joined_at',
+        'visitor_typing_at',
+        'agent_typing_at',
     ];
 
     protected $casts = [
         'last_activity_at' => 'datetime',
+        'agent_joined_at' => 'datetime',
+        'visitor_typing_at' => 'datetime',
+        'agent_typing_at' => 'datetime',
     ];
 
     public function messages(): HasMany

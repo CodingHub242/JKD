@@ -2,17 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Conversation;
 use App\Models\JobApplication;
 use App\Models\Meeting;
-use App\Models\Message;
 use App\Models\Quote;
 use App\Models\Contact;
 use App\Models\SiteVisit;
 use App\Services\ArkeselSmsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\URL;
 
 class InquiryController extends Controller
 {
@@ -132,106 +129,7 @@ class InquiryController extends Controller
         return $this->respond($request, 'Application received! Our HR team will review and get back to you.');
     }
 
-    /* ----------------------------- Live chat ----------------------------- */
-    public function chatStart(Request $request)
-    {
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['nullable', 'email', 'max:255'],
-            'message' => ['required', 'string', 'max:3000'],
-        ]);
-
-        $conversation = $this->getOrCreateConversation($data['name'], $data['email'] ?? null);
-
-        $message = $conversation->messages()->create([
-            'sender_type' => 'visitor',
-            'body' => $data['message'],
-        ]);
-
-        $conversation->update(['last_activity_at' => now()]);
-
-        // Send SMS to admin with direct chat link
-        $chatUrl = URL::to('/admin/chat/' . $conversation->id);
-        $this->notifyAdmin("New live chat from {$conversation->name}. Open chat: {$chatUrl}");
-
-        return response()->json(['ok' => true, 'conversation_id' => $conversation->id]);
-    }
-
-    public function chatSend(Request $request)
-    {
-        $data = $request->validate([
-            'message' => ['required', 'string', 'max:3000'],
-        ]);
-
-        $conversation = $this->conversationFromSession();
-
-        if (! $conversation) {
-            return response()->json(['ok' => false, 'error' => 'No conversation.'], 422);
-        }
-
-        $message = $conversation->messages()->create([
-            'sender_type' => 'visitor',
-            'body' => $data['message'],
-        ]);
-
-        $conversation->update(['last_activity_at' => now()]);
-
-        // Send SMS to admin on every new visitor message
-        $chatUrl = URL::to('/admin/chat/' . $conversation->id);
-        $this->notifyAdmin("New message from {$conversation->name}: {$message->body}. Open chat: {$chatUrl}");
-
-        return response()->json(['ok' => true, 'message' => ['id' => $message->id, 'body' => $message->body, 'sender_type' => 'visitor']]);
-    }
-
-    public function chatMessages(Request $request)
-    {
-        $conversation = $this->conversationFromSession();
-
-        if (! $conversation) {
-            return response()->json(['ok' => true, 'messages' => []]);
-        }
-
-        $lastId = (int) $request->query('last_id', 0);
-
-        $messages = $conversation->messages()
-            ->where('id', '>', $lastId)
-            ->orderBy('id')
-            ->get(['id', 'sender_type', 'body', 'created_at']);
-
-        return response()->json(['ok' => true, 'messages' => $messages]);
-    }
-
     /* ----------------------------- Helpers ----------------------------- */
-    protected function getOrCreateConversation(string $name, ?string $email)
-    {
-        $id = session('chat_conversation_id');
-
-        if ($id) {
-            $conversation = Conversation::find($id);
-            if ($conversation) {
-                return $conversation;
-            }
-        }
-
-        $conversation = Conversation::create([
-            'name' => $name,
-            'email' => $email,
-            'status' => 'open',
-            'last_activity_at' => now(),
-        ]);
-
-        session(['chat_conversation_id' => $conversation->id]);
-
-        return $conversation;
-    }
-
-    protected function conversationFromSession(): ?Conversation
-    {
-        $id = session('chat_conversation_id');
-
-        return $id ? Conversation::find($id) : null;
-    }
-
     protected function jitsiDomain(): string
     {
         return \App\Models\Setting::getValue('jitsi_domain', 'meet.jit.si');

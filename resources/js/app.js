@@ -3,142 +3,108 @@ import Alpine from 'alpinejs';
 
 window.Alpine = Alpine;
 
-/* Live Chat Widget — register before Alpine starts */
+/* Chat widget — must be registered before Alpine starts */
 document.addEventListener('alpine:init', () => {
-    Alpine.data('liveChat', () => ({
+    Alpine.data('chatWidget', () => ({
         open: false,
         name: '',
         email: '',
         message: '',
         messages: [],
-        conversationId: null,
+        lastId: 0,
+        started: false,
         sending: false,
-        polling: null,
+        conversationId: null,
+        agentJoined: false,
+        visitorTyping: false,
+        agentTyping: false,
+        typingTimer: null,
         init() {
-            // Do NOT auto-load messages to avoid showing another visitor's conversation
+            this.poll();
+            this._pollInterval = setInterval(() => this.poll(), 2000);
         },
-        async loadMessages() {
+        async poll() {
             if (!this.conversationId) return;
             try {
-                const res = await fetch(`/chat/messages/${this.conversationId}?last_id=0`, {
+                const res = await fetch(`/chat/messages/${this.conversationId}?last_id=${this.lastId}`, {
                     headers: { 'Accept': 'application/json' }
                 });
                 const data = await res.json();
                 if (data.ok) {
-                    this.messages = data.messages.map(m => ({
-                        ...m,
-                        created_at: new Date(m.created_at).toLocaleTimeString()
-                    }));
-                    this.$nextTick(() => this.scrollToBottom());
+                    if (data.messages.length) {
+                        data.messages.forEach(m => this.messages.push(m));
+                        this.lastId = data.messages[data.messages.length - 1].id;
+                        this.$nextTick(() => {
+                            const el = document.getElementById('chat-log');
+                            if (el) el.scrollTop = el.scrollHeight;
+                        });
+                    }
+                    if (data.agent_joined !== undefined) this.agentJoined = data.agent_joined;
+                    if (data.agent_typing !== undefined) this.agentTyping = data.agent_typing;
                 }
             } catch (e) {}
         },
-        resetConversation() {
-            this.conversationId = null;
-            this.messages = [];
-            sessionStorage.removeItem('jkd_chat_conversation_id');
-            if (this.polling) clearInterval(this.polling);
-        },
         async send() {
             if (!this.message.trim()) return;
-
-            if (!this.conversationId) {
-                if (!this.name.trim() || !this.email.trim()) {
-                    alert('Please enter your name and email to start chatting.');
+            this.sending = true;
+            const payload = { message: this.message };
+            let url = '/chat/send';
+            if (!this.started) {
+                if (!this.name.trim()) {
+                    alert('Please enter your name to start the chat.');
+                    this.sending = false;
                     return;
                 }
-                await this.startConversation();
+                url = '/chat/start';
+                payload.name = this.name;
+                payload.email = this.email;
             }
-
-            const body = this.message;
-            this.sending = true;
             try {
-                const res = await fetch('/chat/send', {
+                const res = await fetch(url, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                        'Accept': 'application/json'
                     },
-                    body: JSON.stringify({ message: body })
+                    body: JSON.stringify(payload)
                 });
                 const data = await res.json();
                 if (data.ok) {
-                    // Optimistic local message with temp id
-                    const tempId = 'visitor-' + Date.now();
-                    this.messages.push({
-                        id: tempId,
-                        body: body,
-                        sender_type: 'visitor',
-                        created_at: new Date().toLocaleTimeString()
-                    });
+                    this.started = true;
+                    this.conversationId = data.conversation_id || this.conversationId;
                     this.message = '';
-                    this.$nextTick(() => this.scrollToBottom());
-                    this.startPolling();
+                    this.visitorTyping = false;
+                    this.poll();
                 }
             } catch (e) {}
             this.sending = false;
         },
-        async startConversation() {
-            // Ensure fresh state for a new visitor
-            this.messages = [];
-            if (this.polling) clearInterval(this.polling);
-            this.polling = null;
-
-            try {
-                const res = await fetch('/chat/start', {
+        onTyping() {
+            if (!this.conversationId) return;
+            this.visitorTyping = true;
+            fetch('/chat/typing', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ conversation_id: this.conversationId, sender: 'visitor' })
+            }).catch(() => {});
+            clearTimeout(this.typingTimer);
+            this.typingTimer = setTimeout(() => {
+                this.visitorTyping = false;
+                fetch('/chat/typing', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                        'Accept': 'application/json'
                     },
-                    body: JSON.stringify({
-                        name: this.name,
-                        email: this.email,
-                        message: this.message
-                    })
-                });
-                const data = await res.json();
-                if (data.ok) {
-                    this.conversationId = data.conversation_id;
-                    sessionStorage.setItem('jkd_chat_conversation_id', data.conversation_id);
-                }
-            } catch (e) {}
-        },
-        startPolling() {
-            if (this.polling) clearInterval(this.polling);
-            this.polling = setInterval(() => this.poll(), 3000);
-        },
-        async poll() {
-            if (!this.conversationId) return;
-            const lastId = this.messages.length ? this.messages[this.messages.length - 1].id : 0;
-            // Skip numeric lastId if it's a temp visitor id
-            const serverLastId = typeof lastId === 'number' ? lastId : 0;
-            try {
-                const res = await fetch(`/chat/messages/${this.conversationId}?last_id=${serverLastId}`, {
-                    headers: { 'Accept': 'application/json' }
-                });
-                const data = await res.json();
-                if (data.ok && data.messages.length) {
-                    data.messages.forEach(m => {
-                        // Replace temp visitor message if server now has the real one
-                        const existingIndex = this.messages.findIndex(
-                            existing => existing.id === m.id || (existing.id && existing.id.startsWith('visitor-') && existing.body === m.body && existing.sender_type === m.sender_type)
-                        );
-                        if (existingIndex >= 0) {
-                            this.messages[existingIndex] = { ...m, created_at: new Date(m.created_at).toLocaleTimeString() };
-                        } else {
-                            this.messages.push({ ...m, created_at: new Date(m.created_at).toLocaleTimeString() });
-                        }
-                    });
-                    this.$nextTick(() => this.scrollToBottom());
-                }
-            } catch (e) {}
-        },
-        scrollToBottom() {
-            const el = document.getElementById('live-chat-messages');
-            if (el) el.scrollTop = el.scrollHeight;
+                    body: JSON.stringify({ conversation_id: this.conversationId, sender: 'visitor', clear: true })
+                }).catch(() => {});
+            }, 1500);
         }
     }));
 });
@@ -157,7 +123,7 @@ function initPreloader() {
     };
 
     if (seen) {
-        el.classList.add('is-hidden');
+        hide();
         return;
     }
 
@@ -172,7 +138,6 @@ function initPreloader() {
         finish();
     } else {
         window.addEventListener('load', finish, { once: true });
-        // Safety net in case load never fires
         setTimeout(finish, 2500);
     }
 }

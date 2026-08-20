@@ -137,7 +137,7 @@
 @endsection
 
 @push('scripts')
-<script>
+{{-- <script>
     document.addEventListener('alpine:init', () => {
         Alpine.data('chatWidget', () => ({
             open: false,
@@ -191,5 +191,5 @@
             }
         }));
     });
-</script>
+</script> --}}
 @endpush

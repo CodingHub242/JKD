@@ -144,6 +144,11 @@ class AdminSubmissionController extends Controller
             ->orderBy('id')
             ->get(['id', 'sender_type', 'body', 'created_at']);
 
-        return response()->json(['ok' => true, 'messages' => $messages]);
+        return response()->json([
+            'ok' => true,
+            'messages' => $messages,
+            'agent_joined' => $conversation->agent_joined_at !== null,
+            'visitor_typing' => $conversation->visitor_typing_at !== null && $conversation->visitor_typing_at->greaterThan(now()->subSeconds(3)),
+        ]);
     }
 }
