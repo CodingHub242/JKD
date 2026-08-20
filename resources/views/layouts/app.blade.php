@@ -140,6 +140,54 @@
         </div>
     </footer>
 
+    {{-- Live Chat Widget --}}
+    <div x-data="liveChat()" class="fixed bottom-6 right-6 z-50">
+        {{-- Chat Button --}}
+        <button
+            @click="open = !open"
+            class="grid h-14 w-14 place-items-center rounded-full bg-brand-500 text-ink-950 shadow-lg transition-transform hover:scale-105"
+            aria-label="Open chat"
+        >
+            <svg x-show="!open" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.77 9.77 0 01-3.46-.36L3 21l1.36-4.64A9.77 9.77 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+            <svg x-show="open" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+
+        {{-- Chat Box --}}
+        <div
+            x-show="open"
+            x-transition
+            class="absolute bottom-20 right-0 w-80 rounded-2xl border border-white/10 bg-ink-900 shadow-2xl"
+        >
+            <div class="border-b border-white/10 px-4 py-3">
+                <div class="font-semibold text-white">Live Chat</div>
+                <div class="text-xs text-ink-400">We typically reply within minutes</div>
+            </div>
+
+            <div class="max-h-80 overflow-y-auto p-4" id="live-chat-messages">
+                <template x-for="msg in messages" :key="msg.id">
+                    <div :class="msg.sender_type === 'visitor' ? 'text-left' : 'text-right'">
+                        <span class="inline-block max-w-[80%] rounded-2xl px-3 py-2 text-sm" :class="msg.sender_type === 'visitor' ? 'bg-white/10 text-ink-100' : 'bg-brand-500 text-ink-950'" x-text="msg.body"></span>
+                    </div>
+                </template>
+                <p x-show="messages.length === 0" class="text-sm text-ink-400">Start a conversation with us.</p>
+            </div>
+
+            <form class="border-t border-white/10 p-3" @submit.prevent="send">
+                <div class="flex gap-2">
+                    <input
+                        type="text"
+                        x-model="message"
+                        placeholder="Type a message..."
+                        class="field flex-1"
+                        :disabled="sending"
+                        required
+                    >
+                    <button type="submit" class="btn-primary btn px-4" :disabled="sending">Send</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     @stack('scripts')
 </body>
 </html>
