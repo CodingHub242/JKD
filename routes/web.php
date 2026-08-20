@@ -14,6 +14,13 @@ use Illuminate\Support\Facades\Route;
 /* ----------------------------- Public site ----------------------------- */
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+//Add route to link storage using Artisan::call
+Route::get('/storage-link', function () {
+    Artisan::call('storage:link');
+    return redirect('/');
+});
+
+
 Route::get('/services', [PageController::class, 'services'])->name('services');
 Route::get('/projects', [PageController::class, 'projects'])->name('projects');
 Route::get('/projects/{slug}', [PageController::class, 'projectShow'])->name('projects.show');
