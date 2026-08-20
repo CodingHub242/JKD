@@ -18,20 +18,6 @@ class AdminSubmissionController extends Controller
         $this->middleware('admin');
     }
 
-    protected function broadcastDashboardStats(): void
-    {
-        $stats = [
-            'projects' => \App\Models\Project::count(),
-            'quotes_new' => \App\Models\Quote::where('status', 'new')->count(),
-            'contacts_new' => \App\Models\Contact::where('status', 'new')->count(),
-            'visits' => \App\Models\SiteVisit::where('status', 'requested')->count(),
-            'meetings' => \App\Models\Meeting::where('status', 'requested')->count(),
-            'applications' => \App\Models\JobApplication::where('status', 'new')->count(),
-            'chats_open' => \App\Models\Conversation::where('status', 'open')->count(),
-        ];
-        DashboardStatsUpdated::dispatch($stats);
-    }
-
     protected function types(): array
     {
         return [
@@ -102,10 +88,6 @@ class AdminSubmissionController extends Controller
 
         $item->update(['status' => $request->input('status')]);
 
-        NewSubmission::dispatch($type, $item);
-
-        $this->broadcastDashboardStats();
-
         return redirect()->route('admin.submissions.show', [$type, $id])->with('success', 'Status updated.');
     }
 
@@ -141,8 +123,6 @@ class AdminSubmissionController extends Controller
         ]);
 
         $conversation->update(['last_activity_at' => now()]);
-
-        $this->broadcastDashboardStats();
 
         if ($request->expectsJson()) {
             return response()->json([

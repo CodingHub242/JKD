@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\DashboardStatsUpdated;
 use App\Models\Conversation;
 use App\Models\JobApplication;
 use App\Models\Meeting;
@@ -36,8 +35,6 @@ class AdminController extends Controller
         $recentQuotes = Quote::latest()->take(5)->get();
         $recentContacts = Contact::latest()->take(5)->get();
         $openChats = Conversation::withCount('messages')->where('status', 'open')->latest('last_activity_at')->take(5)->get();
-
-        DashboardStatsUpdated::dispatch($stats);
 
         return view('admin.dashboard', compact('stats', 'recentQuotes', 'recentContacts', 'openChats'));
     }
