@@ -87,6 +87,11 @@ document.addEventListener('alpine:init', () => {
             this.sending = false;
         },
         async startConversation() {
+            // Ensure fresh state for a new visitor
+            this.messages = [];
+            if (this.polling) clearInterval(this.polling);
+            this.polling = null;
+
             try {
                 const res = await fetch('/chat/start', {
                     method: 'POST',
