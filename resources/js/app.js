@@ -25,7 +25,24 @@ document.addEventListener('alpine:init', () => {
             const saved = sessionStorage.getItem('jkd_chat_conversation_id');
             if (saved) {
                 this.conversationId = saved;
+                this.loadMessages();
             }
+        },
+        async loadMessages() {
+            if (!this.conversationId) return;
+            try {
+                const res = await fetch(`/chat/messages/${this.conversationId}?last_id=0`, {
+                    headers: { 'Accept': 'application/json' }
+                });
+                const data = await res.json();
+                if (data.ok) {
+                    this.messages = data.messages.map(m => ({
+                        ...m,
+                        created_at: new Date(m.created_at).toLocaleTimeString()
+                    }));
+                    this.$nextTick(() => this.scrollToBottom());
+                }
+            } catch (e) {}
         },
         async send() {
             if (!this.message.trim()) return;
@@ -38,6 +55,7 @@ document.addEventListener('alpine:init', () => {
                 await this.startConversation();
             }
 
+            const body = this.message;
             this.sending = true;
             try {
                 const res = await fetch('/chat/send', {
@@ -47,13 +65,15 @@ document.addEventListener('alpine:init', () => {
                         'Accept': 'application/json',
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
                     },
-                    body: JSON.stringify({ message: this.message })
+                    body: JSON.stringify({ message: body })
                 });
                 const data = await res.json();
                 if (data.ok) {
+                    // Optimistic local message with temp id
+                    const tempId = 'visitor-' + Date.now();
                     this.messages.push({
-                        id: Date.now(),
-                        body: this.message,
+                        id: tempId,
+                        body: body,
                         sender_type: 'visitor',
                         created_at: new Date().toLocaleTimeString()
                     });
@@ -92,16 +112,26 @@ document.addEventListener('alpine:init', () => {
         },
         async poll() {
             if (!this.conversationId) return;
+            const lastId = this.messages.length ? this.messages[this.messages.length - 1].id : 0;
+            // Skip numeric lastId if it's a temp visitor id
+            const serverLastId = typeof lastId === 'number' ? lastId : 0;
             try {
-                const res = await fetch('/chat/messages?last_id=0', {
+                const res = await fetch(`/chat/messages/${this.conversationId}?last_id=${serverLastId}`, {
                     headers: { 'Accept': 'application/json' }
                 });
                 const data = await res.json();
                 if (data.ok && data.messages.length) {
-                    this.messages = data.messages.map(m => ({
-                        ...m,
-                        created_at: new Date(m.created_at).toLocaleTimeString()
-                    }));
+                    data.messages.forEach(m => {
+                        // Replace temp visitor message if server now has the real one
+                        const existingIndex = this.messages.findIndex(
+                            existing => existing.id === m.id || (existing.id && existing.id.startsWith('visitor-') && existing.body === m.body && existing.sender_type === m.sender_type)
+                        );
+                        if (existingIndex >= 0) {
+                            this.messages[existingIndex] = { ...m, created_at: new Date(m.created_at).toLocaleTimeString() };
+                        } else {
+                            this.messages.push({ ...m, created_at: new Date(m.created_at).toLocaleTimeString() });
+                        }
+                    });
                     this.$nextTick(() => this.scrollToBottom());
                 }
             } catch (e) {}
