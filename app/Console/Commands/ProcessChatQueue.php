@@ -15,7 +15,7 @@ class ProcessChatQueue extends Command
     public function handle(): void
     {
         // Find conversations with new visitor messages that haven't been SMS-notified yet
-        // This runs on a schedule to ensure SMS notifications are sent even if the queue worker is down
+        // This runs on a schedule to ensure SMS notifications are sent well even if the queue worker is down
         $conversations = Conversation::where('agent_joined_at', null)
             ->where('last_activity_at', '>', now()->subHours(2))
             ->get();
