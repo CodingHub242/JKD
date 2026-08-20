@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Cache;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -36,6 +37,8 @@ class AppServiceProvider extends ServiceProvider
                 'social_twitter'    => '',
                 'social_youtube'    => '',
                 'sms_admin_number'  => '',
+                'arkesel_api_key'   => '',
+                'arkesel_sender_id' => 'TASK-MGR',
                 'jitsi_domain'      => 'meet.jit.si',
                 'about_story'       => '',
                 'about_mission'     => '',
@@ -43,7 +46,9 @@ class AppServiceProvider extends ServiceProvider
             ];
 
             try {
-                $stored = \App\Models\Setting::pluck('value', 'key')->toArray();
+                $stored = Cache::remember('settings.all', 300, function () {
+                    return \App\Models\Setting::pluck('value', 'key')->toArray();
+                });
             } catch (\Throwable $e) {
                 $stored = [];
             }
