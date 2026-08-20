@@ -14,7 +14,7 @@
 
     <div class="flex min-h-screen">
         {{-- Sidebar --}}
-        <aside style="background: linear-gradient(to bottom, #0c1426c9 10%, #0c1426b7 100%), url('{{asset('CEO.jpeg')}}') no-repeat center center / cover !important;"
+        <aside style="background: linear-gradient(to bottom, #0c1426e5 10%, #0c1426e7 100%), url('{{asset('CEO.jpeg')}}') no-repeat center center / cover !important;"
             class="fixed inset-y-0 left-0 z-50 w-64 transform border-r border-white/10 bg-ink-900 p-4 transition-transform lg:static lg:translate-x-0"
             :class="sidebar ? 'translate-x-0' : '-translate-x-full'"
         >
