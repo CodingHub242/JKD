@@ -10,13 +10,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body x-data="{ sidebar: false }" class="bg-ink-950 text-ink-100 font-sans antialiased">
+<body x-data="{ sidebar: false, isDesktop: false }" x-init="isDesktop = window.innerWidth >= 1024; window.addEventListener('resize', () => isDesktop = window.innerWidth >= 1024)" class="bg-ink-950 text-ink-100 font-sans antialiased">
 
     <div class="flex min-h-screen">
         {{-- Sidebar --}}
         <aside style="background: linear-gradient(to bottom, #0c1426f1 10%, #0c1426f5 100%), url('{{asset('CEO.jpeg')}}') no-repeat center center / cover !important;"
-            class="fixed inset-y-0 left-0 z-50 w-64 transform border-r border-white/10 bg-ink-900 p-4 transition-transform lg:static lg:translate-x-0"
-            :class="sidebar ? 'translate-x-0' : '-translate-x-full'"
+            class="admin-sidebar fixed inset-y-0 left-0 z-50 w-64 transform border-r border-white/10 bg-ink-900 p-4 transition-transform h-screen overflow-y-auto lg:translate-x-0"
+            :class="isDesktop || sidebar ? 'translate-x-0' : '-translate-x-full'"
         >
             <div class="flex items-center gap-2 px-2 py-3 font-display text-lg font-bold text-white">
                 <span class="grid h-9 w-9 place-items-center rounded-lg bg-brand-500 text-ink-950">J</span>
@@ -45,7 +45,7 @@
                 <a href="{{ route('admin.settings') }}" class="admin-link">Settings</a>
                 
 
-                <div class="bottom-4 left-4 right-4 space-y-3">
+                <div class="mt-4 space-y-3">
                 <a href="{{ url('/') }}" target="_blank" class="admin-link">View Site &rarr;</a>
                 <form action="{{ route('admin.logout') }}" method="POST">
                     @csrf
@@ -63,7 +63,7 @@
             </div>
         @endif
 
-        <div class="flex-1">
+        <div class="flex-1 lg:ml-64">
             <header class="flex items-center justify-between border-b border-white/10 bg-ink-900/60 px-5 py-4 lg:px-8">
                 <button class="lg:hidden text-white" @click="sidebar = true" aria-label="Open menu">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>

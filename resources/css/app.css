@@ -406,3 +406,28 @@
 .admin-card {
     @apply rounded-2xl border border-white/10 bg-white/[0.03] p-6;
 }
+
+/* ------------------------------------------------------------------ */
+/* Admin sidebar scrollbar                                             */
+/* ------------------------------------------------------------------ */
+.admin-sidebar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+.admin-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.admin-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 999px;
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
