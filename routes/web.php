@@ -14,12 +14,14 @@ use Illuminate\Support\Facades\Route;
 /* ----------------------------- Public site ----------------------------- */
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-//Add route to link storage using Artisan::call
-Route::get('/storage-link', function () {
-    Artisan::call('storage:link');
-    return redirect('/');
-});
-
+// Serve files from storage/app/public without symlink (for Wasmer/ephemeral filesystems)
+Route::get('/storage/{path}', function ($path) {
+    $file = storage_path('app/public/' . $path);
+    if (!file_exists($file)) {
+        abort(404);
+    }
+    return response()->file($file);
+})->where('path', '.*');
 
 Route::get('/services', [PageController::class, 'services'])->name('services');
 Route::get('/projects', [PageController::class, 'projects'])->name('projects');
