@@ -44,6 +44,11 @@ Route::get('/storage/{path}', function ($path) {
     }
 })->where('path', '.*');
 
+//Artisan storage:link
+Route::get('/storage-link', function () {
+    return Artisan::call('storage:link');
+});
+
 Route::get('/services', [PageController::class, 'services'])->name('services');
 Route::get('/projects', [PageController::class, 'projects'])->name('projects');
 Route::get('/projects/{slug}', [PageController::class, 'projectShow'])->name('projects.show');
