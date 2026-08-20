@@ -178,5 +178,61 @@
     </div>
 
     @stack('scripts')
+
+    <script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('chatWidget', () => ({
+            open: false,
+            name: '',
+            email: '',
+            message: '',
+            messages: [],
+            lastId: 0,
+            started: false,
+            sending: false,
+            init() {
+                this.poll();
+                setInterval(() => this.poll(), 3000);
+            },
+            async poll() {
+                try {
+                    const res = await fetch('{{ route('chat.messages') }}', { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                    const data = await res.json();
+                    if (data.ok && data.messages.length) {
+                        data.messages.forEach(m => this.messages.push(m));
+                        this.lastId = data.messages[data.messages.length - 1].id;
+                        this.$nextTick(() => { const el = document.getElementById('chat-log'); if (el) el.scrollTop = el.scrollHeight; });
+                    }
+                } catch (e) {}
+            },
+            async send() {
+                if (!this.message.trim()) return;
+                this.sending = true;
+                const payload = { message: this.message };
+                let url = '{{ route('chat.send') }}';
+                if (!this.started) {
+                    if (!this.name.trim()) { alert('Please enter your name to start the chat.'); this.sending = false; return; }
+                    url = '{{ route('chat.start') }}';
+                    payload.name = this.name;
+                    payload.email = this.email;
+                }
+                try {
+                    const res = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const data = await res.json();
+                    if (data.ok) {
+                        this.started = true;
+                        this.message = '';
+                        this.poll();
+                    }
+                } catch (e) {}
+                this.sending = false;
+            }
+        }));
+    });
+</script>
 </body>
 </html>
