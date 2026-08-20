@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Login · JKD PINNacle</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preload" as="style" href="http://127.0.0.1:8080/build/assets/app-Dm0D0nEq.css" /><link rel="modulepreload" href="http://127.0.0.1:8080/build/assets/app-jagI0LNK.js" /><link rel="stylesheet" href="http://127.0.0.1:8080/build/assets/app-Dm0D0nEq.css" /><script type="module" src="http://127.0.0.1:8080/build/assets/app-jagI0LNK.js"></script></head>
+<body class="flex min-h-screen items-center justify-center bg-ink-950 p-5 text-ink-100">
+    <div class="w-full max-w-md">
+        <div class="mb-8 text-center">
+            <a href="http://127.0.0.1:8080" class="inline-flex items-center gap-2 font-display text-2xl font-bold text-white">
+                <span class="grid h-10 w-10 place-items-center rounded-lg bg-brand-500 text-ink-950">J</span>
+                <span>JKD <span class="text-brand-400">PINNacle</span></span>
+            </a>
+            <p class="mt-2 text-sm text-ink-400">Admin portal — sign in to manage the site</p>
+        </div>
+
+        <div class="surface p-8">
+            
+            <form method="POST" action="http://127.0.0.1:8080/admin/login">
+                <input type="hidden" name="_token" value="v8QDiws71HjJSKy6q46cJRY5C6DAFfYJFcJGhYdz" autocomplete="off">                <div class="mb-4">
+                    <label class="field-label" for="email">Email</label>
+                    <input id="email" name="email" type="email" required autofocus value="" class="field">
+                </div>
+                <div class="mb-6">
+                    <label class="field-label" for="password">Password</label>
+                    <input id="password" name="password" type="password" required class="field">
+                </div>
+                <button type="submit" class="btn-primary btn w-full">Sign in</button>
+            </form>
+        </div>
+
+        <p class="mt-6 text-center text-xs text-ink-500">
+            <a href="http://127.0.0.1:8080" class="hover:text-brand-300">&larr; Back to website</a>
+        </p>
+    </div>
+</body>
+</html>

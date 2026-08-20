@@ -12,7 +12,7 @@
     <section class="section container-x">
         <div class="mx-auto max-w-3xl">
             <div class="surface reveal p-8 sm:p-10">
-                <h2 class="text-2xl font-bold">Apply to join JKD PINnacle</h2>
+                <h2 class="text-2xl font-bold">Apply to join JKD PINNACLE CONSTRUCTION</h2>
                 <p class="mt-2 text-sm text-ink-300">Fill in your details and we'll be in touch if there's a fit.</p>
 
                 @if(session('success'))

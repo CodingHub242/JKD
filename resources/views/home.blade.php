@@ -71,11 +71,11 @@
     <section class="border-y border-white/5 bg-ink-900/40">
         <div class="container-x grid grid-cols-2 gap-6 py-12 md:grid-cols-4">
             <div class="stat reveal">
-                <div class="font-display text-4xl font-bold text-brand-400">120+</div>
+                <div class="font-display text-4xl font-bold text-brand-400">50+</div>
                 <div class="mt-1 text-sm text-ink-300">Projects Delivered</div>
             </div>
             <div class="stat reveal reveal-delay-1">
-                <div class="font-display text-4xl font-bold text-brand-400">18</div>
+                <div class="font-display text-4xl font-bold text-brand-400">10+</div>
                 <div class="mt-1 text-sm text-ink-300">Years of Expertise</div>
             </div>
             <div class="stat reveal reveal-delay-2">
@@ -145,7 +145,7 @@
             <div class="max-w-2xl reveal">
                 <p class="eyebrow">World-Class Craft</p>
                 <h2 class="mt-4 text-3xl font-bold sm:text-4xl">A standard of design ability & expertise few can match.</h2>
-                <p class="mt-4 text-ink-200">Every {{ $site['company_name'] ?? 'JKD PINNacle' }} project is a statement of engineering excellence and architectural vision — built to be admired for decades.</p>
+                <p class="mt-4 text-ink-200">Every {{ $site['company_name'] ?? 'JKD PINNACLE CONSTRUCTION' }} project is a statement of engineering excellence and architectural vision — built to be admired for decades.</p>
                 <a href="{{ url('/projects') }}" class="btn-primary btn mt-8">Explore Our Work</a>
             </div>
         </div>
