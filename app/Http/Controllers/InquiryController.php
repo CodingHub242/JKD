@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\NewSubmission;
 use App\Models\Conversation;
 use App\Models\JobApplication;
 use App\Models\Meeting;
@@ -35,9 +34,6 @@ class InquiryController extends Controller
 
         $this->notifyAdmin("New quote request from {$quote->name} ({$quote->email}).");
 
-        NewSubmission::dispatch('quotes', $quote);
-        $this->broadcastDashboardStats();
-
         return $this->respond($request, 'Thanks! Your quote request has been received. We\'ll be in touch shortly.');
     }
 
@@ -55,9 +51,6 @@ class InquiryController extends Controller
         $contact = Contact::create($data);
 
         $this->notifyAdmin("New contact message from {$contact->name} ({$contact->email}).");
-
-        NewSubmission::dispatch('contacts', $contact);
-        $this->broadcastDashboardStats();
 
         return $this->respond($request, 'Your message has been sent. Our team will respond soon.');
     }
@@ -78,9 +71,6 @@ class InquiryController extends Controller
         $visit = SiteVisit::create($data);
 
         $this->notifyAdmin("New site visit request from {$visit->name} for {$visit->preferred_date}.");
-
-        NewSubmission::dispatch('site_visits', $visit);
-        $this->broadcastDashboardStats();
 
         return $this->respond($request, 'Site visit requested. We\'ll confirm the schedule with you.');
     }
@@ -104,9 +94,6 @@ class InquiryController extends Controller
         $meeting = Meeting::create($data);
 
         $this->notifyAdmin("New meeting request from {$meeting->name} for {$meeting->scheduled_at}.");
-
-        NewSubmission::dispatch('meetings', $meeting);
-        $this->broadcastDashboardStats();
 
         $joinUrl = 'https://' . ($this->jitsiDomain()) . '/' . $room;
 
@@ -141,9 +128,6 @@ class InquiryController extends Controller
         $application = JobApplication::create($data);
 
         $this->notifyAdmin("New job application from {$application->name} for {$application->position}.");
-
-        NewSubmission::dispatch('applications', $application);
-        $this->broadcastDashboardStats();
 
         return $this->respond($request, 'Application received! Our HR team will review and get back to you.');
     }
