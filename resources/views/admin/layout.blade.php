@@ -45,7 +45,7 @@
                 <a href="{{ route('admin.settings') }}" class="admin-link">Settings</a>
             </nav>
 
-            <div class="absolute bottom-4 left-4 right-4 space-y-2">
+            <div class="absolute bottom-4 left-4 right-4 space-y-3">
                 <a href="{{ url('/') }}" target="_blank" class="admin-link">View Site &rarr;</a>
                 <form action="{{ route('admin.logout') }}" method="POST">
                     @csrf

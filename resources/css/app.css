@@ -24,7 +24,7 @@
     --color-ink-600: #324056;
     --color-ink-700: #243047;
     --color-ink-800: #16203a;
-    --color-ink-900: linear-gradient(to bottom, #0c142675 10%, #0c142657 100%), url('CEO.jpeg') no-repeat center center / cover;
+    --color-ink-900: #0c1426;
     --color-ink-950: #060a14;
 }
 
