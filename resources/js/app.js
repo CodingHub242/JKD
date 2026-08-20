@@ -2,15 +2,8 @@ import './bootstrap';
 import Alpine from 'alpinejs';
 
 window.Alpine = Alpine;
-Alpine.start();
 
-document.addEventListener('DOMContentLoaded', () => {
-    initPreloader();
-    initReveal();
-    initParallax();
-});
-
-/* Live Chat Widget */
+/* Live Chat Widget — register before Alpine starts */
 document.addEventListener('alpine:init', () => {
     Alpine.data('liveChat', () => ({
         open: false,
@@ -150,6 +143,8 @@ document.addEventListener('alpine:init', () => {
     }));
 });
 
+Alpine.start();
+
 /* Preloader — shown once per browser session */
 function initPreloader() {
     const el = document.getElementById('preloader');
@@ -227,3 +222,7 @@ function initParallax() {
         }
     }, { passive: true });
 }
+
+initPreloader();
+initReveal();
+initParallax();
