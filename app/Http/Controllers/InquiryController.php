@@ -154,9 +154,6 @@ class InquiryController extends Controller
         $chatUrl = URL::to('/admin/chat/' . $conversation->id);
         $this->notifyAdmin("New live chat from {$conversation->name}. Open chat: {$chatUrl}");
 
-        NewSubmission::dispatch('chats', $conversation);
-        $this->broadcastDashboardStats();
-
         return response()->json(['ok' => true, 'conversation_id' => $conversation->id]);
     }
 
