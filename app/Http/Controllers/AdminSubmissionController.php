@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Events\DashboardStatsUpdated;
-use App\Events\NewChatMessage;
 use App\Events\NewSubmission;
 use App\Models\Conversation;
 use App\Models\Contact;
@@ -144,8 +143,6 @@ class AdminSubmissionController extends Controller
         ]);
 
         $conversation->update(['last_activity_at' => now()]);
-
-        NewChatMessage::dispatch($message, $conversation->id);
 
         $this->broadcastDashboardStats();
 
