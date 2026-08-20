@@ -5,10 +5,14 @@ namespace App\Http\Controllers;
 use App\Jobs\ChatJob;
 use App\Models\Conversation;
 use App\Models\Message;
+use App\Services\ArkeselSmsService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 
 class ChatController extends Controller
 {
+    public function __construct(protected ArkeselSmsService $sms) {}
+
     public function start(Request $request)
     {
         $data = $request->validate([
@@ -29,8 +33,8 @@ class ChatController extends Controller
             'body' => $data['message'],
         ]);
 
-        // Dispatch background job for SMS notification
-        ChatJob::dispatch($conversation->id, $data['message'], 'visitor');
+        // Try to dispatch background job; fall back to synchronous SMS if queue is not running
+        $this->notifyAdmin($conversation, $data['message'], 'visitor');
 
         return response()->json(['ok' => true, 'conversation_id' => $conversation->id]);
     }
@@ -51,8 +55,8 @@ class ChatController extends Controller
 
         $conversation->update(['last_activity_at' => now()]);
 
-        // Dispatch background job for SMS notification
-        ChatJob::dispatch($conversation->id, $message->body, 'visitor');
+        // Try to dispatch background job; fall back to synchronous SMS if queue is not running
+        $this->notifyAdmin($conversation, $message->body, 'visitor');
 
         return response()->json(['ok' => true, 'message' => ['id' => $message->id, 'body' => $message->body, 'sender_type' => 'visitor']]);
     }
