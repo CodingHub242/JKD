@@ -141,55 +141,39 @@
         </div>
     </footer>
 
-    {{-- Live Chat Widget --}}
-    <div x-data="liveChat()" class="fixed bottom-6 right-6 z-50">
-        {{-- Chat Button --}}
-        <button
-            @click="open = !open"
-            class="grid h-14 w-14 place-items-center rounded-full bg-brand-500 text-ink-950 shadow-lg transition-transform hover:scale-105"
-            aria-label="Open chat"
-        >
-            <svg x-show="!open" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.77 9.77 0 01-3.46-.36L3 21l1.36-4.64A9.77 9.77 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-            <svg x-show="open" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    {{-- Live chat widget --}}
+    <div x-data="chatWidget()" class="fixed bottom-5 right-5 z-[60]" x-cloak>
+        <button x-show="!open" @click="open = true" class="grid h-14 w-14 place-items-center rounded-full bg-brand-500 text-ink-950 shadow-lg transition hover:bg-brand-400" aria-label="Open chat">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h8M8 14h5M21 12a9 9 0 01-9 9 9.75 9.75 0 01-3-.5L3 21l1.5-4.5A9 9 0 1121 12z"/></svg>
         </button>
 
-        {{-- Chat Box --}}
-        <div
-            x-show="open"
-            x-transition
-            class="absolute bottom-20 right-0 w-80 rounded-2xl border border-white/10 bg-ink-900 shadow-2xl"
-            x-init="$watch('open', value => { if (value && conversationId) loadMessages(); })"
-        >
-            <div class="border-b border-white/10 px-4 py-3 flex items-center justify-between">
-                <div>
-                    <div class="font-semibold text-white">Live Chat</div>
-                    <div class="text-xs text-ink-400">We typically reply within minutes</div>
-                </div>
-                <button type="button" @click="resetConversation()" class="text-xs text-ink-400 hover:text-white">New chat</button>
+        <div x-show="open" @click.outside="open = false" class="flex h-[28rem] w-[22rem] max-w-[calc(100vw-2.5rem)] flex-col overflow-hidden rounded-2xl border border-white/10 bg-ink-900 shadow-2xl">
+            <div class="flex items-center justify-between bg-brand-500 px-4 py-3 text-ink-950">
+                <span class="font-semibold">Live Chat</span>
+                <button @click="open = false" class="text-ink-950/70 hover:text-ink-950">&times;</button>
             </div>
 
-            <div class="max-h-80 overflow-y-auto p-4" id="live-chat-messages">
-                <template x-for="msg in messages" :key="msg.id">
-                    <div :class="msg.sender_type === 'visitor' ? 'text-left' : 'text-right'">
-                        <span class="inline-block max-w-[80%] rounded-2xl px-3 py-2 text-sm" :class="msg.sender_type === 'visitor' ? 'bg-white/10 text-ink-100' : 'bg-brand-500 text-ink-950'" x-text="msg.body"></span>
+            <div class="flex-1 space-y-3 overflow-y-auto p-4" id="chat-log">
+                <template x-for="m in messages" :key="m.id">
+                    <div :class="m.sender_type === 'visitor' ? 'text-right' : 'text-left'">
+                        <span class="inline-block max-w-[80%] rounded-2xl px-3 py-2 text-sm" :class="m.sender_type === 'visitor' ? 'bg-brand-500 text-ink-950' : 'bg-white/10 text-ink-100'" x-text="m.body"></span>
                     </div>
                 </template>
-                <p x-show="messages.length === 0" class="text-sm text-ink-400">Start a conversation with us.</p>
+                <p x-show="messages.length === 0" class="text-sm text-ink-400">Start the conversation — we usually reply fast.</p>
             </div>
 
-            <form class="border-t border-white/10 p-3" @submit.prevent="send">
-                <div class="flex gap-2">
-                    <input
-                        type="text"
-                        x-model="message"
-                        placeholder="Type a message..."
-                        class="field flex-1"
-                        :disabled="sending"
-                        required
-                    >
-                    <button type="submit" class="btn-primary btn px-4" :disabled="sending">Send</button>
+            <div class="border-t border-white/10 p-3">
+                <div x-show="!started" class="mb-2 grid grid-cols-2 gap-2">
+                    <input type="text" x-model="name" placeholder="Your name" class="field py-2 text-sm">
+                    <input type="email" x-model="email" placeholder="Email" class="field py-2 text-sm">
                 </div>
-            </form>
+                <form @submit.prevent="send">
+                    <div class="flex gap-2">
+                        <input type="text" x-model="message" placeholder="Type a message..." class="field py-2 text-sm" :disabled="sending">
+                        <button type="submit" class="btn-primary btn px-4 py-2" :disabled="sending">Send</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 

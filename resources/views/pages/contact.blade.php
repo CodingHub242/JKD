@@ -99,7 +99,7 @@
         </div>
     </section>
 
-    {{-- Live chat widget --}}
+    {{-- Live chat widget
     <div x-data="chatWidget()" class="fixed bottom-5 right-5 z-[60]" x-cloak>
         <button x-show="!open" @click="open = true" class="grid h-14 w-14 place-items-center rounded-full bg-brand-500 text-ink-950 shadow-lg transition hover:bg-brand-400" aria-label="Open chat">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h8M8 14h5M21 12a9 9 0 01-9 9 9.75 9.75 0 01-3-.5L3 21l1.5-4.5A9 9 0 1121 12z"/></svg>
@@ -133,7 +133,7 @@
                 </form>
             </div>
         </div>
-    </div>
+    </div> --}}
 @endsection
 
 @push('scripts')
