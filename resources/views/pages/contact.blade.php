@@ -64,7 +64,7 @@
             </div>
 
             {{-- Contact form --}}
-            <div class="surface reveal p-8 sm:p-10">
+            <div class="surface reveal p-8 sm:p-10" style="height: fit-content;">
                 <h2 class="text-2xl font-bold">Send us a message</h2>
                 @if(session('success') && !Str::contains(session('success'), 'http'))
                     <div class="mt-4 rounded-xl border border-brand-400/40 bg-brand-500/10 px-4 py-3 text-sm text-brand-200">{{ session('success') }}</div>
