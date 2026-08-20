@@ -58,6 +58,8 @@ document.addEventListener('alpine:init', () => {
                 url = '/chat/start';
                 payload.name = this.name;
                 payload.email = this.email;
+            } else if (this.conversationId) {
+                payload.conversation_id = this.conversationId;
             }
             try {
                 const res = await fetch(url, {
