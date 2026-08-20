@@ -25,7 +25,8 @@
     --color-ink-700: #243047;
     --color-ink-800: #16203a;
     --color-ink-900: #0c1426;
-    --color-ink-950: #060a14;
+    --color-ink-950: #090a0c;   
+    /* //#060a14; */
 }
 
 /* ------------------------------------------------------------------ */
@@ -254,7 +255,7 @@
 .hero__overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, rgba(6,10,20,.55) 0%, rgba(6,10,20,.35) 40%, rgba(6,10,20,.85) 100%);
+    background: linear-gradient(180deg, rgba(5, 9, 17, 0.55) 0%, rgba(6,10,20,.35) 40%, rgba(6,10,20,.85) 100%);
     z-index: 2;
 }
 
@@ -369,7 +370,7 @@
     padding-bottom: 3.5rem;
     background:
         radial-gradient(1200px 400px at 70% -10%, rgba(200,132,47,0.18), transparent 60%),
-        linear-gradient(180deg, #0c1426 0%, #060a14 100%);
+        linear-gradient(180deg, #0a0d14 0%, #030508 100%);
     border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
