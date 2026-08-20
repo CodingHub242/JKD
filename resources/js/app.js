@@ -22,11 +22,7 @@ document.addEventListener('alpine:init', () => {
         sending: false,
         polling: null,
         init() {
-            const saved = sessionStorage.getItem('jkd_chat_conversation_id');
-            if (saved) {
-                this.conversationId = saved;
-                this.loadMessages();
-            }
+            // Do NOT auto-load messages to avoid showing another visitor's conversation
         },
         async loadMessages() {
             if (!this.conversationId) return;
@@ -43,6 +39,12 @@ document.addEventListener('alpine:init', () => {
                     this.$nextTick(() => this.scrollToBottom());
                 }
             } catch (e) {}
+        },
+        resetConversation() {
+            this.conversationId = null;
+            this.messages = [];
+            sessionStorage.removeItem('jkd_chat_conversation_id');
+            if (this.polling) clearInterval(this.polling);
         },
         async send() {
             if (!this.message.trim()) return;

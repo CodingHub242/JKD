@@ -158,10 +158,14 @@
             x-show="open"
             x-transition
             class="absolute bottom-20 right-0 w-80 rounded-2xl border border-white/10 bg-ink-900 shadow-2xl"
+            x-init="$watch('open', value => { if (value && conversationId) loadMessages(); })"
         >
-            <div class="border-b border-white/10 px-4 py-3">
-                <div class="font-semibold text-white">Live Chat</div>
-                <div class="text-xs text-ink-400">We typically reply within minutes</div>
+            <div class="border-b border-white/10 px-4 py-3 flex items-center justify-between">
+                <div>
+                    <div class="font-semibold text-white">Live Chat</div>
+                    <div class="text-xs text-ink-400">We typically reply within minutes</div>
+                </div>
+                <button type="button" @click="resetConversation()" class="text-xs text-ink-400 hover:text-white">New chat</button>
             </div>
 
             <div class="max-h-80 overflow-y-auto p-4" id="live-chat-messages">
