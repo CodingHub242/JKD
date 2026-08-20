@@ -13,30 +13,6 @@ use Illuminate\Support\Facades\Route;
 /* ----------------------------- Public site ----------------------------- */
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('/check',function(){
-try {
-      //  Artisan::call('storage:link --force');
-      //  Artisan::call('db:seed --force');
-        Artisan::call('reverb:install');
-        //Artisan::call('cache:clear');
-        //Artisan::call('config:clear');
-        return response()->json(['message' => 'Storage link created successfully!'], 200);
-    } catch (\Exception $e) {
-        return response()->json(['error' => 'Failed to create storage link: ' . $e->getMessage()], 500);
-    }
-});
-
-Route::get('/start/reverb',function(){
-try {
-        Artisan::call('reverb:start --force');
-        //Artisan::call('db:seed --force');
-        return response()->json(['message' => 'Reverb started successfully!'], 200);
-    } catch (\Exception $e) {
-        return response()->json(['error' => 'Failed to create storage link: ' . $e->getMessage()], 500);
-    }
-});
-
-
 Route::get('/services', [PageController::class, 'services'])->name('services');
 Route::get('/projects', [PageController::class, 'projects'])->name('projects');
 Route::get('/projects/{slug}', [PageController::class, 'projectShow'])->name('projects.show');
