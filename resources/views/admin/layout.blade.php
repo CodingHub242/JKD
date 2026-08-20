@@ -14,13 +14,13 @@
 
     <div class="flex min-h-screen">
         {{-- Sidebar --}}
-        <aside
+        <aside style="background: linear-gradient(to bottom, #0c142675 10%, #0c142657 100%), url('CEO.jpeg') no-repeat center center / cover !important;"
             class="fixed inset-y-0 left-0 z-50 w-64 transform border-r border-white/10 bg-ink-900 p-4 transition-transform lg:static lg:translate-x-0"
             :class="sidebar ? 'translate-x-0' : '-translate-x-full'"
         >
             <div class="flex items-center gap-2 px-2 py-3 font-display text-lg font-bold text-white">
                 <span class="grid h-9 w-9 place-items-center rounded-lg bg-brand-500 text-ink-950">J</span>
-                <span>{{ $site['company_name'] ?? 'JKD PINNacle' }}</span>
+                <span>{{ $site['company_name'] ?? 'JKD PINNACLE CONSTRUCTION' }}</span>
             </div>
 
             <nav class="mt-4 space-y-1 text-sm">
