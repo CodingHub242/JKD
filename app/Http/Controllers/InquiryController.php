@@ -180,9 +180,6 @@ class InquiryController extends Controller
         $chatUrl = URL::to('/admin/chat/' . $conversation->id);
         $this->notifyAdmin("New message from {$conversation->name}: {$message->body}. Open chat: {$chatUrl}");
 
-        NewSubmission::dispatch('chats', $conversation);
-        $this->broadcastDashboardStats();
-
         return response()->json(['ok' => true, 'message' => ['id' => $message->id, 'body' => $message->body, 'sender_type' => 'visitor']]);
     }
 
@@ -250,20 +247,6 @@ class InquiryController extends Controller
         } catch (\Throwable $e) {
             // SMS failures must not break the user's submission.
         }
-    }
-
-    protected function broadcastDashboardStats(): void
-    {
-        $stats = [
-            'projects' => \App\Models\Project::count(),
-            'quotes_new' => \App\Models\Quote::where('status', 'new')->count(),
-            'contacts_new' => \App\Models\Contact::where('status', 'new')->count(),
-            'visits' => \App\Models\SiteVisit::where('status', 'requested')->count(),
-            'meetings' => \App\Models\Meeting::where('status', 'requested')->count(),
-            'applications' => \App\Models\JobApplication::where('status', 'new')->count(),
-            'chats_open' => \App\Models\Conversation::where('status', 'open')->count(),
-        ];
-        \App\Events\DashboardStatsUpdated::dispatch($stats);
     }
 
     protected function respond(Request $request, string $message)
