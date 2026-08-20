@@ -111,6 +111,129 @@ document.addEventListener('alpine:init', () => {
     }));
 });
 
+/* Admin chat — must be registered before Alpine starts */
+document.addEventListener('alpine:init', () => {
+    Alpine.data('adminChat', () => ({
+        conversationId: null,
+        message: '',
+        messages: [],
+        lastId: 0,
+        sending: false,
+        agentJoined: false,
+        visitorTyping: false,
+        polling: null,
+        init() {
+            this.conversationId = this.$el?.dataset?.conversationId || this.conversationId;
+            if (!this.conversationId) return;
+            this.loadInitial();
+            this.startPolling();
+        },
+        startPolling() {
+            this.polling = setInterval(() => this.poll(), 2000);
+        },
+        stopPolling() {
+            if (this.polling) clearInterval(this.polling);
+        },
+        async loadInitial() {
+            if (!this.conversationId) return;
+            try {
+                const res = await fetch(`/admin/chat/${this.conversationId}/messages?last_id=0`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+                });
+                const data = await res.json();
+                if (data.ok) {
+                    if (data.messages.length) {
+                        data.messages.forEach(m => this.messages.push(m));
+                        this.lastId = data.messages[data.messages.length - 1].id;
+                    }
+                    this.agentJoined = data.agent_joined || false;
+                    this.visitorTyping = data.visitor_typing || false;
+                    this.$nextTick(() => {
+                        const el = document.getElementById('admin-chat-log');
+                        if (el) el.scrollTop = el.scrollHeight;
+                    });
+                }
+            } catch (e) {}
+        },
+        async poll() {
+            if (!this.conversationId) return;
+            try {
+                const res = await fetch(`/admin/chat/${this.conversationId}/messages?last_id=${this.lastId}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+                });
+                const data = await res.json();
+                if (data.ok) {
+                    if (data.messages.length) {
+                        data.messages.forEach(m => this.messages.push(m));
+                        this.lastId = data.messages[data.messages.length - 1].id;
+                    }
+                    this.agentJoined = data.agent_joined || false;
+                    this.visitorTyping = data.visitor_typing || false;
+                    this.$nextTick(() => {
+                        const el = document.getElementById('admin-chat-log');
+                        if (el) el.scrollTop = el.scrollHeight;
+                    });
+                }
+            } catch (e) {}
+        },
+        async send() {
+            if (!this.message.trim() || !this.conversationId) return;
+            this.sending = true;
+            try {
+                const res = await fetch(`/admin/chat/${this.conversationId}/reply`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ message: this.message })
+                });
+                const data = await res.json();
+                if (data.ok) {
+                    this.message = '';
+                    this.poll();
+                }
+            } catch (e) {}
+            this.sending = false;
+        },
+        async join() {
+            if (!this.conversationId) return;
+            try {
+                const res = await fetch(`/admin/chat/${this.conversationId}/agent-join`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                });
+                const data = await res.json();
+                if (data.ok) this.agentJoined = true;
+            } catch (e) {}
+        },
+        async leave() {
+            if (!this.conversationId) return;
+            try {
+                const res = await fetch(`/admin/chat/${this.conversationId}/agent-leave`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                });
+                const data = await res.json();
+                if (data.ok) this.agentJoined = false;
+            } catch (e) {}
+        },
+        onTyping() {
+            // Admin typing indicator could be added here
+        }
+    }));
+});
+
 Alpine.start();
 
 /* Preloader — shown once per browser session */

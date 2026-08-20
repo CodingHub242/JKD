@@ -7,7 +7,7 @@
 @section('content')
     <a href="{{ route('admin.chat.index') }}" class="text-sm text-ink-400 hover:text-white">&larr; All Conversations</a>
 
-    <div x-data="adminChat({{ $conversation->id }})" class="admin-card mt-4 flex h-[70vh] flex-col">
+    <div x-data="adminChat()" data-conversation-id="{{ $conversation->id }}" class="admin-card mt-4 flex h-[70vh] flex-col">
         <div class="border-b border-white/10 px-5 py-3 flex items-center justify-between">
             <div>
                 <div class="font-semibold text-white">{{ $conversation->name }}</div>
@@ -38,109 +38,3 @@
         </form>
     </div>
 @endsection
-
-@push('scripts')
-<script>
-    document.addEventListener('alpine:init', () => {
-        Alpine.data('adminChat', (conversationId) => ({
-            message: '',
-            messages: [],
-            lastId: 0,
-            sending: false,
-            agentJoined: false,
-            visitorTyping: false,
-            polling: null,
-            init() {
-                this.loadInitial();
-                this.startPolling();
-            },
-            startPolling() {
-                this.polling = setInterval(() => this.poll(), 2000);
-            },
-            stopPolling() {
-                if (this.polling) clearInterval(this.polling);
-            },
-            async loadInitial() {
-                try {
-                    const res = await fetch('{{ url('/admin/chat') }}/' + conversationId + '/messages?last_id=0', {
-                        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
-                    });
-                    const data = await res.json();
-                    if (data.ok) {
-                        if (data.messages.length) {
-                            data.messages.forEach(m => this.messages.push(m));
-                            this.lastId = data.messages[data.messages.length - 1].id;
-                        }
-                        this.agentJoined = data.agent_joined || false;
-                        this.visitorTyping = data.visitor_typing || false;
-                        this.$nextTick(() => {
-                            const el = document.getElementById('admin-chat-log');
-                            if (el) el.scrollTop = el.scrollHeight;
-                        });
-                    }
-                } catch (e) {}
-            },
-            async poll() {
-                try {
-                    const res = await fetch('{{ url('/admin/chat') }}/' + conversationId + '/messages?last_id=' + this.lastId, {
-                        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
-                    });
-                    const data = await res.json();
-                    if (data.ok) {
-                        if (data.messages.length) {
-                            data.messages.forEach(m => this.messages.push(m));
-                            this.lastId = data.messages[data.messages.length - 1].id;
-                        }
-                        this.agentJoined = data.agent_joined || false;
-                        this.visitorTyping = data.visitor_typing || false;
-                        this.$nextTick(() => {
-                            const el = document.getElementById('admin-chat-log');
-                            if (el) el.scrollTop = el.scrollHeight;
-                        });
-                    }
-                } catch (e) {}
-            },
-            async send() {
-                if (!this.message.trim()) return;
-                this.sending = true;
-                try {
-                    const res = await fetch('{{ url('/admin/chat') }}/' + conversationId + '/reply', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
-                        body: JSON.stringify({ message: this.message })
-                    });
-                    const data = await res.json();
-                    if (data.ok) {
-                        this.message = '';
-                        this.poll();
-                    }
-                } catch (e) {}
-                this.sending = false;
-            },
-            async join() {
-                try {
-                    const res = await fetch('{{ url('/admin/chat') }}/' + conversationId + '/agent-join', {
-                        method: 'POST',
-                        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
-                    });
-                    const data = await res.json();
-                    if (data.ok) this.agentJoined = true;
-                } catch (e) {}
-            },
-            async leave() {
-                try {
-                    const res = await fetch('{{ url('/admin/chat') }}/' + conversationId + '/agent-leave', {
-                        method: 'POST',
-                        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
-                    });
-                    const data = await res.json();
-                    if (data.ok) this.agentJoined = false;
-                } catch (e) {}
-            },
-            onTyping() {
-                // Admin typing indicator could be added here
-            }
-        }));
-    });
-</script>
-@endpush
