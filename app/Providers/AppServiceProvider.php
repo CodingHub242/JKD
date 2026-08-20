@@ -22,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
         // Share admin-managed site settings with every view.
         view()->composer('*', function ($view) {
             $defaults = [
-                'company_name'      => 'JKD PINNacle',
+                'company_name'      => 'JKD PINNACLE CONSTRUCTION',
                 'company_tagline'   => 'Building Excellence',
                 'company_email'     => 'hello@jkdpinnacle.com',
                 'company_phone'     => '+233 00 000 0000',

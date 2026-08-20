@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="{{ $metaDescription ?? 'JKD PINNacle — world-class construction, design and build solutions.' }}">
-    <title>{{ $title ?? 'JKD PINNacle' }} · Building Excellence</title>
+    <title>{{ $title ?? 'JKD PINNACLE CONSTRUCTION' }} · Building Excellence</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -135,8 +135,7 @@
         </div>
         <div class="border-t border-white/5">
             <div class="container-x flex flex-col items-center justify-between gap-2 py-6 text-xs text-ink-400 sm:flex-row">
-                <p>© {{ date('Y') }} JKD PINNacle. All rights reserved.</p>
-                <p>Built with precision in Ghana.</p>
+                <p>© {{ date('Y') }} JKD PINNACLE CONSTRUCTION. All rights reserved.</p>
             </div>
         </div>
     </footer>
