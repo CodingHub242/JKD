@@ -14,7 +14,7 @@
         <div class="mb-8 text-center">
             <a href="{{ url('/') }}" class="inline-flex items-center gap-2 font-display text-2xl font-bold text-white">
                 <span class="grid h-10 w-10 place-items-center rounded-lg bg-brand-500 text-ink-950">J</span>
-                <span>JKD <span class="text-brand-400">PINNacle</span></span>
+                <span>JKD <span class="text-brand-400">PINNACLE CONSTRUCTION</span></span>
             </a>
             <p class="mt-2 text-sm text-ink-400">Building Tracker — sign in to view your project updates</p>
         </div>
