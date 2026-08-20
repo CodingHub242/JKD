@@ -5,12 +5,7 @@
 <IfModule mod_rewrite.c>
     RewriteEngine on
     RewriteCond %{REQUEST_URI} !^public
-    RewriteCond %{REQUEST_URI} !^storage
     RewriteRule ^(.*)$ public/$1 [L]
-
-    # Route /storage/* through Laravel so our route can serve files from storage/app/public
-    RewriteCond %{REQUEST_URI} ^storage
-    RewriteRule ^(.*)$ public/index.php [L]
 </IfModule>
 
 # BEGIN cPanel-generated php ini directives, do not edit

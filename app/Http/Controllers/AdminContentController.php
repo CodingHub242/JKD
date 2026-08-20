@@ -218,7 +218,7 @@ class AdminContentController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('updates', 'public');
+            $data['image'] = $this->storeFileInPublic($request->file('image'), 'updates');
         }
 
         $data['posted_at'] = $data['posted_at'] ?? now();
@@ -270,7 +270,7 @@ class AdminContentController extends Controller
         foreach ($config['fields'] as $key => $field) {
             if ($field['type'] === 'file') {
                 if ($request->hasFile($key)) {
-                    $data[$key] = $request->file($key)->store($this->storageFolder($key), 'public');
+                    $data[$key] = $this->storeFileInPublic($request->file($key), $this->storageFolder($key));
                 } elseif ($item && $item->exists) {
                     $data[$key] = $item->{$key};
                 }
@@ -284,7 +284,7 @@ class AdminContentController extends Controller
                         $paths = $item->{$key};
                     }
                     foreach ($request->file($key) as $file) {
-                        $paths[] = $file->store('galleries', 'public');
+                        $paths[] = $this->storeFileInPublic($file, 'galleries');
                     }
                     $data[$key] = $paths;
                 } elseif ($item && $item->exists) {
@@ -314,6 +314,20 @@ class AdminContentController extends Controller
         }
 
         return $data;
+    }
+
+    protected function storeFileInPublic(\Illuminate\Http\UploadedFile $file, string $folder): string
+    {
+        $fileName = Str::random(40) . '.' . $file->getClientOriginalExtension();
+        $publicPath = public_path($folder);
+
+        if (!file_exists($publicPath)) {
+            mkdir($publicPath, 0755, true);
+        }
+
+        $file->move($publicPath, $fileName);
+
+        return $folder . '/' . $fileName;
     }
 
     protected function storageFolder(string $key): string

@@ -33,7 +33,7 @@
                         <div class="font-medium text-white">{{ $update->title }}</div>
                         <div class="text-xs text-ink-400">{{ $update->posted_at->format('M d, Y') }} · {{ $update->progress }}%</div>
                         @if($update->body)<p class="mt-2 text-sm text-ink-200">{{ $update->body }}</p>@endif
-                        @if($update->image)<img src="{{ url('storage/'.$update->image) }}" class="mt-3 h-32 rounded-lg">@endif
+                        @if($update->image)<img src="{{ asset($update->image) }}" class="mt-3 h-32 rounded-lg">@endif
                     </div>
                     <form action="{{ route('admin.content.updates.destroy', [$project->id, $update->id]) }}" method="POST" onsubmit="return confirm('Delete this update?');">
                         @csrf

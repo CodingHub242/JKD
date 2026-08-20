@@ -119,7 +119,13 @@ class InquiryController extends Controller
         ]);
 
         if ($request->hasFile('cv')) {
-            $data['cv_path'] = $request->file('cv')->store('cvs', 'public');
+            $fileName = \Illuminate\Support\Str::random(40) . '.' . $request->file('cv')->getClientOriginalExtension();
+            $publicPath = public_path('cvs');
+            if (!file_exists($publicPath)) {
+                mkdir($publicPath, 0755, true);
+            }
+            $request->file('cv')->move($publicPath, $fileName);
+            $data['cv_path'] = 'cvs/' . $fileName;
         }
 
         $application = JobApplication::create($data);

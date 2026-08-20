@@ -25,7 +25,7 @@
                     @php $progress = $project->latest_progress; @endphp
                     <a href="{{ route('tracker.show', $project->slug) }}" class="surface reveal block p-6 transition hover:border-brand-400/40">
                         @if($project->cover_image)
-                            <img src="{{ url('storage/'.$project->cover_image) }}" alt="{{ $project->title }}" class="mb-4 h-44 w-full rounded-xl object-cover">
+                            <img src="{{ asset($project->cover_image) }}" alt="{{ $project->title }}" class="mb-4 h-44 w-full rounded-xl object-cover">
                         @endif
                         <div class="flex items-center justify-between">
                             <h3 class="text-xl font-semibold text-white">{{ $project->title }}</h3>

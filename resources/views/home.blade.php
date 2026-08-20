@@ -13,9 +13,9 @@
                     $raw = $slide->media_path;
                     $mediaUrl = str_starts_with($raw, 'http')
                         ? $raw
-                        : (file_exists(public_path($raw)) ? asset($raw) : url('storage/'.$raw));
+                        : asset($raw);
                     $posterUrl = $slide->poster
-                        ? (str_starts_with($slide->poster, 'http') ? $slide->poster : (file_exists(public_path($slide->poster)) ? asset($slide->poster) : url('storage/'.$slide->poster)))
+                        ? (str_starts_with($slide->poster, 'http') ? $slide->poster : asset($slide->poster))
                         : '';
                 @endphp
                 <div class="hero__slide" :class="active === {{ $i }} && 'is-active'">
@@ -165,7 +165,7 @@
             @forelse($projects as $project)
                 <a href="{{ url('/projects/'.$project->slug) }}" class="project-card group reveal">
                     <div class="overflow-hidden">
-                        <img src="{{ $project->cover_image ? url('storage/'.$project->cover_image) : asset('slide1.jpg') }}" alt="{{ $project->title }}" class="project-card__img">
+                        <img src="{{ $project->cover_image ? asset($project->cover_image) : asset('slide1.jpg') }}" alt="{{ $project->title }}" class="project-card__img">
                     </div>
                     <div class="p-6">
                         <div class="flex items-center justify-between gap-3">
@@ -194,7 +194,7 @@
                     <div class="surface reveal p-7">
                         <p class="text-ink-200">“{{ $t->quote }}”</p>
                         <div class="mt-6 flex items-center gap-3">
-                            @if($t->avatar)<img src="{{ url('storage/'.$t->avatar) }}" alt="{{ $t->name }}" class="h-11 w-11 rounded-full object-cover">@endif
+                            @if($t->avatar)<img src="{{ asset($t->avatar) }}" alt="{{ $t->name }}" class="h-11 w-11 rounded-full object-cover">@endif
                             <div>
                                 <div class="font-semibold text-white">{{ $t->name }}</div>
                                 <div class="text-sm text-ink-400">{{ $t->role }}</div>

@@ -18,7 +18,7 @@
         <div class="grid gap-10 lg:grid-cols-3">
             <div class="lg:col-span-2">
                 @if($project->cover_image)
-                    <img src="{{ url('storage/'.$project->cover_image) }}" alt="{{ $project->title }}" class="w-full rounded-2xl border border-white/10">
+                    <img src="{{ asset($project->cover_image) }}" alt="{{ $project->title }}" class="w-full rounded-2xl border border-white/10">
                 @endif
 
                 <div class="mt-8 prose-invert max-w-none">
@@ -28,7 +28,7 @@
                 @if(count($gallery))
                     <div class="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3">
                         @foreach($gallery as $image)
-                            <img src="{{ url('storage/'.$image) }}" alt="{{ $project->title }}" class="h-40 w-full rounded-xl object-cover">
+                            <img src="{{ asset($image) }}" alt="{{ $project->title }}" class="h-40 w-full rounded-xl object-cover">
                         @endforeach
                     </div>
                 @endif
@@ -69,7 +69,7 @@
                 @foreach($related as $p)
                     <a href="{{ url('/projects/'.$p->slug) }}" class="project-card group">
                         <div class="overflow-hidden">
-                            <img src="{{ $p->cover_image ? url('storage/'.$p->cover_image) : asset('slide1.jpg') }}" alt="{{ $p->title }}" class="project-card__img">
+                            <img src="{{ $p->cover_image ? asset($p->cover_image) : asset('slide1.jpg') }}" alt="{{ $p->title }}" class="project-card__img">
                         </div>
                         <div class="p-6">
                             <h3 class="text-xl font-semibold text-white">{{ $p->title }}</h3>

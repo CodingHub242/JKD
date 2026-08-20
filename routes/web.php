@@ -14,41 +14,6 @@ use Illuminate\Support\Facades\Route;
 /* ----------------------------- Public site ----------------------------- */
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// Serve files from storage/app/public without symlink (for Wasmer/ephemeral filesystems)
-Route::get('/storage/{path}', function ($path) {
-    $file = storage_path('app/public/' . $path);
-
-    // Security: prevent directory traversal
-    $realFile = realpath($file);
-    $realBase = realpath(storage_path('app/public'));
-    if (!$realFile || !str_starts_with($realFile, $realBase)) {
-        abort(403);
-    }
-
-    if (!file_exists($realFile)) {
-        abort(404);
-    }
-
-    // Try Laravel's response()->file() first (sets proper Content-Type)
-    try {
-        return response()->file($realFile);
-    } catch (\Throwable $e) {
-        // Fallback: stream the file directly with generic headers
-        return response()->stream(function () use ($realFile) {
-            readfile($realFile);
-        }, 200, [
-            'Content-Type' => mime_content_type($realFile) ?: 'application/octet-stream',
-            'Content-Length' => filesize($realFile),
-            'Cache-Control' => 'public, max-age=31536000',
-        ]);
-    }
-})->where('path', '.*');
-
-//Artisan storage:link
-Route::get('/storage-link', function () {
-    return Artisan::call('storage:link');
-});
-
 Route::get('/services', [PageController::class, 'services'])->name('services');
 Route::get('/projects', [PageController::class, 'projects'])->name('projects');
 Route::get('/projects/{slug}', [PageController::class, 'projectShow'])->name('projects.show');

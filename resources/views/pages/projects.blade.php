@@ -23,7 +23,7 @@
             @forelse($projects as $project)
                 <a href="{{ url('/projects/'.$project->slug) }}" class="project-card group reveal">
                     <div class="overflow-hidden">
-                        <img src="{{ $project->cover_image ? url('storage/'.$project->cover_image) : asset('slide1.jpg') }}" alt="{{ $project->title }}" class="project-card__img">
+                        <img src="{{ $project->cover_image ? asset($project->cover_image) : asset('slide1.jpg') }}" alt="{{ $project->title }}" class="project-card__img">
                     </div>
                     <div class="p-6">
                         <div class="flex items-center justify-between gap-3">
