@@ -79,45 +79,5 @@
     </div>
 
     @stack('scripts')
-
-    @if(Auth::check() && Auth::user()->is_admin)
-    <script>
-        window.reverbConfig = {
-            key: '{{ env('REVERB_APP_KEY') }}',
-            host: '{{ env('REVERB_HOST', 'localhost') }}',
-            port: {{ env('REVERB_PORT', 8080) }},
-            scheme: '{{ env('REVERB_SCHEME', 'http') }}',
-        };
-    </script>
-    <script>
-        document.addEventListener('alpine:init', () => {
-            // Listen for new submissions
-            window.Echo.private('admin.submissions')
-                .listen('NewSubmission', (e) => {
-                    // Show a subtle notification
-                    const toast = document.createElement('div');
-                    toast.className = 'fixed bottom-4 right-4 z-[70] rounded-xl border border-brand-400/40 bg-brand-500/15 px-4 py-3 text-sm text-brand-200 shadow-lg';
-                    toast.textContent = 'New ' + e.type + ' received';
-                    document.body.appendChild(toast);
-                    setTimeout(() => toast.remove(), 3000);
-
-                    // Reload page if we're on a submissions page
-                    const path = window.location.pathname;
-                    if (path.includes('/admin/submissions/')) {
-                        window.location.reload();
-                    }
-                });
-
-            // Listen for dashboard stats updates
-            window.Echo.private('admin.dashboard')
-                .listen('DashboardStatsUpdated', (e) => {
-                    const path = window.location.pathname;
-                    if (path === '/admin/dashboard' || path === '/admin') {
-                        window.location.reload();
-                    }
-                });
-        });
-    </script>
-    @endif
 </body>
 </html>

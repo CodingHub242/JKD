@@ -40,26 +40,36 @@
             messages: [],
             lastId: 0,
             sending: false,
+            polling: null,
             init() {
-                // Listen for new messages via WebSocket
-                window.Echo.private(`chat.${conversationId}`)
-                    .listen('NewChatMessage', (e) => {
-                        if (e.conversation_id === conversationId) {
-                            this.messages.push(e);
-                            this.lastId = e.id;
-                            this.$nextTick(() => {
-                                const el = document.getElementById('admin-chat-log');
-                                if (el) el.scrollTop = el.scrollHeight;
-                            });
-                        }
-                    });
-
-                // Fallback: load initial messages via HTTP
                 this.loadInitial();
+                this.startPolling();
+            },
+            startPolling() {
+                this.polling = setInterval(() => this.poll(), 3000);
+            },
+            stopPolling() {
+                if (this.polling) clearInterval(this.polling);
             },
             async loadInitial() {
                 try {
                     const res = await fetch('{{ url('/admin/chat') }}/' + conversationId + '/messages?last_id=0', {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+                    });
+                    const data = await res.json();
+                    if (data.ok && data.messages.length) {
+                        data.messages.forEach(m => this.messages.push(m));
+                        this.lastId = data.messages[data.messages.length - 1].id;
+                        this.$nextTick(() => {
+                            const el = document.getElementById('admin-chat-log');
+                            if (el) el.scrollTop = el.scrollHeight;
+                        });
+                    }
+                } catch (e) {}
+            },
+            async poll() {
+                try {
+                    const res = await fetch('{{ url('/admin/chat') }}/' + conversationId + '/messages?last_id=' + this.lastId, {
                         headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
                     });
                     const data = await res.json();
@@ -85,6 +95,7 @@
                     const data = await res.json();
                     if (data.ok) {
                         this.message = '';
+                        this.poll();
                     }
                 } catch (e) {}
                 this.sending = false;

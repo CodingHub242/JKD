@@ -13,6 +13,7 @@ use App\Models\SiteVisit;
 use App\Services\ArkeselSmsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 class InquiryController extends Controller
 {
@@ -165,9 +166,11 @@ class InquiryController extends Controller
 
         $conversation->update(['last_activity_at' => now()]);
 
-        $this->notifyAdmin("New live chat from {$conversation->name}.");
+        // Send SMS to admin with direct chat link
+        $chatUrl = URL::to('/admin/chat/' . $conversation->id);
+        $this->notifyAdmin("New live chat from {$conversation->name}. Open chat: {$chatUrl}");
 
-        NewChatMessage::dispatch($message, $conversation->id);
+        NewSubmission::dispatch('chats', $conversation);
         $this->broadcastDashboardStats();
 
         return response()->json(['ok' => true, 'conversation_id' => $conversation->id]);
@@ -192,7 +195,11 @@ class InquiryController extends Controller
 
         $conversation->update(['last_activity_at' => now()]);
 
-        NewChatMessage::dispatch($message, $conversation->id);
+        // Send SMS to admin on every new visitor message
+        $chatUrl = URL::to('/admin/chat/' . $conversation->id);
+        $this->notifyAdmin("New message from {$conversation->name}: {$message->body}. Open chat: {$chatUrl}");
+
+        NewSubmission::dispatch('chats', $conversation);
         $this->broadcastDashboardStats();
 
         return response()->json(['ok' => true, 'message' => ['id' => $message->id, 'body' => $message->body, 'sender_type' => 'visitor']]);
