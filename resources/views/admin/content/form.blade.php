@@ -42,7 +42,7 @@
                         @elseif($field['type'] === 'file')
                             <input type="file" name="{{ $key }}" class="field">
                             @if($isEdit && optional($item)->{$key})
-                                <p class="mt-2 text-xs text-ink-400">Current: <a href="{{ asset('storage/'.optional($item)->{$key}) }}" target="_blank" class="text-brand-300">view</a></p>
+                                <p class="mt-2 text-xs text-ink-400">Current: <a href="{{ url('storage/'.optional($item)->{$key}) }}" target="_blank" class="text-brand-300">view</a></p>
                             @endif
 
                         @elseif($field['type'] === 'files')
@@ -50,7 +50,7 @@
                             @if($isEdit && is_array(optional($item)->{$key}) && count(optional($item)->{$key}))
                                 <div class="mt-2 flex flex-wrap gap-2">
                                     @foreach(optional($item)->{$key} as $img)
-                                        <img src="{{ asset('storage/'.$img) }}" class="h-16 w-16 rounded object-cover">
+                                        <img src="{{ url('storage/'.$img) }}" class="h-16 w-16 rounded object-cover">
                                     @endforeach
                                 </div>
                             @endif

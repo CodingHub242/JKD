@@ -48,7 +48,7 @@
                                     <p class="mt-3 text-sm text-ink-200">{{ $update->body }}</p>
                                 @endif
                                 @if($update->image)
-                                    <img src="{{ asset('storage/'.$update->image) }}" alt="{{ $update->title }}" class="mt-4 w-full rounded-xl">
+                                    <img src="{{ url('storage/'.$update->image) }}" alt="{{ $update->title }}" class="mt-4 w-full rounded-xl">
                                 @endif
                             </div>
                         </div>
@@ -60,7 +60,7 @@
 
             <aside class="space-y-6">
                 @if($project->cover_image)
-                    <img src="{{ asset('storage/'.$project->cover_image) }}" alt="{{ $project->title }}" class="w-full rounded-2xl border border-white/10">
+                    <img src="{{ url('storage/'.$project->cover_image) }}" alt="{{ $project->title }}" class="w-full rounded-2xl border border-white/10">
                 @endif
 
                 @if(count($gallery))
@@ -68,7 +68,7 @@
                         <h3 class="text-lg font-semibold text-white">Gallery</h3>
                         <div class="mt-4 grid grid-cols-2 gap-3">
                             @foreach($gallery as $image)
-                                <img src="{{ asset('storage/'.$image) }}" alt="" class="h-28 w-full rounded-lg object-cover">
+                                <img src="{{ url('storage/'.$image) }}" alt="" class="h-28 w-full rounded-lg object-cover">
                             @endforeach
                         </div>
                     </div>

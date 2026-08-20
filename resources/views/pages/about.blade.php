@@ -35,7 +35,7 @@
             @forelse($team as $member)
                 <div class="surface reveal overflow-hidden">
                     @if($member->photo)
-                        <img src="{{ asset('storage/'.$member->photo) }}" alt="{{ $member->name }}" class="h-56 w-full object-cover">
+                        <img src="{{ url('storage/'.$member->photo) }}" alt="{{ $member->name }}" class="h-56 w-full object-cover">
                     @else
                         <div class="grid h-56 w-full place-items-center bg-brand-500/10 text-4xl font-bold text-brand-400">{{ substr($member->name, 0, 1) }}</div>
                     @endif

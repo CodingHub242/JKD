@@ -20,7 +20,7 @@
                     <dt class="text-xs uppercase tracking-wider text-ink-500">{{ Str::headline($key) }}</dt>
                     <dd class="mt-1 text-ink-100">
                         @if($key === 'cv_path')
-                            <a href="{{ asset('storage/'.$value) }}" target="_blank" class="text-brand-300 hover:underline">Download CV</a>
+                            <a href="{{ url('storage/'.$value) }}" target="_blank" class="text-brand-300 hover:underline">Download CV</a>
                         @elseif(is_null($value) || $value === '')
                             <span class="text-ink-500">—</span>
                         @else
