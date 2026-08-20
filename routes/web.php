@@ -17,10 +17,31 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 // Serve files from storage/app/public without symlink (for Wasmer/ephemeral filesystems)
 Route::get('/storage/{path}', function ($path) {
     $file = storage_path('app/public/' . $path);
-    if (!file_exists($file)) {
+
+    // Security: prevent directory traversal
+    $realFile = realpath($file);
+    $realBase = realpath(storage_path('app/public'));
+    if (!$realFile || !str_starts_with($realFile, $realBase)) {
+        abort(403);
+    }
+
+    if (!file_exists($realFile)) {
         abort(404);
     }
-    return response()->file($file);
+
+    // Try Laravel's response()->file() first (sets proper Content-Type)
+    try {
+        return response()->file($realFile);
+    } catch (\Throwable $e) {
+        // Fallback: stream the file directly with generic headers
+        return response()->stream(function () use ($realFile) {
+            readfile($realFile);
+        }, 200, [
+            'Content-Type' => mime_content_type($realFile) ?: 'application/octet-stream',
+            'Content-Length' => filesize($realFile),
+            'Cache-Control' => 'public, max-age=31536000',
+        ]);
+    }
 })->where('path', '.*');
 
 Route::get('/services', [PageController::class, 'services'])->name('services');
