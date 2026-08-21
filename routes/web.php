@@ -16,7 +16,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/clear-route-cache', function () {
     Artisan::call('route:clear');
-    Artisan::cal('view:clear');
+    Artisan::call('view:clear');
     Artisan::call('cache:clear');
     Artisan::call('config:clear');
     return 'Route cache cleared';
