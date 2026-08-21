@@ -21,6 +21,10 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->group('web', [
+            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+            \Illuminate\Session\Middleware\StartSession::class,
+            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\NoCache::class,
         ]);
     })
