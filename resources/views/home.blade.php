@@ -139,7 +139,7 @@
     {{-- Project video boast --}}
     <section class="relative overflow-hidden bg-ink-900">
         <div class="absolute inset-0">
-            <img src="{{ asset('slide2.jpg') }}" alt="" class="h-full w-full object-cover opacity-30">
+            <img src="{{ asset('center.gif') }}" alt="" class="h-full w-full object-cover opacity-30">
         </div>
         <div class="relative container-x section">
             <div class="max-w-2xl reveal">
