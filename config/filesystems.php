@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('FILESYSTEM_DISK', 'local'),
+    'default' => env('FILESYSTEM_DISK', 'public'),
 
     /*
     |--------------------------------------------------------------------------
@@ -39,26 +39,18 @@ return [
         ],
 
         'public' => [
-            'driver' => 'local',
-            'root' => storage_path('public'),
-            'url' => env('APP_URL').'/storage',
+            'driver' => env('FILESYSTEM_DRIVER', 'local'),
+            'key' => env('FILESYSTEM_DRIVER') === 's3' ? env('AWS_ACCESS_KEY_ID') : null,
+            'secret' => env('FILESYSTEM_DRIVER') === 's3' ? env('AWS_SECRET_ACCESS_KEY') : null,
+            'region' => env('FILESYSTEM_DRIVER') === 's3' ? env('AWS_DEFAULT_REGION') : null,
+            'bucket' => env('FILESYSTEM_DRIVER') === 's3' ? env('AWS_BUCKET') : null,
+            'url' => env('FILESYSTEM_DRIVER') === 's3' ? env('FILESYSTEM_URL') : env('APP_URL').'/storage',
+            'endpoint' => env('FILESYSTEM_DRIVER') === 's3' ? env('AWS_ENDPOINT') : null,
+            'use_path_style_endpoint' => env('FILESYSTEM_DRIVER') === 's3' ? env('AWS_USE_PATH_STYLE_ENDPOINT', false) : false,
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
         ],
-        
-        'storage' => [
-            'driver' => 'local',
-            'root' => public_path('storage'),
-            'url' => env('APP_URL').'/storage',
-            'visibility' => 'public',
-            'throw' => false,
-            'report' => false,
-        ],
-        
-    //      'links' => [
-    //     public_path('storage') => storage_path('app/public'),
-    // ],
 
         's3' => [
             'driver' => 's3',
@@ -69,6 +61,29 @@ return [
             'url' => env('AWS_URL'),
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+            'throw' => false,
+            'report' => false,
+        ],
+
+        'r2' => [
+            'driver' => 's3',
+            'key' => env('R2_ACCESS_KEY_ID'),
+            'secret' => env('R2_SECRET_ACCESS_KEY'),
+            'region' => env('R2_REGION', 'auto'),
+            'bucket' => env('R2_BUCKET'),
+            'url' => env('R2_URL'),
+            'endpoint' => env('R2_ENDPOINT'),
+            'use_path_style_endpoint' => env('R2_USE_PATH_STYLE_ENDPOINT', true),
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+
+        'local_public' => [
+            'driver' => 'local',
+            'root' => public_path(),
+            'url' => env('APP_URL'),
+            'visibility' => 'public',
             'throw' => false,
             'report' => false,
         ],

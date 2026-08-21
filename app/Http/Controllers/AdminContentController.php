@@ -332,15 +332,21 @@ class AdminContentController extends Controller
     protected function storeFileInPublic(\Illuminate\Http\UploadedFile $file, string $folder): string
     {
         $fileName = Str::random(40) . '.' . $file->getClientOriginalExtension();
-        $publicPath = public_path($folder);
+        $path = $folder . '/' . $fileName;
 
-        if (!file_exists($publicPath)) {
-            mkdir($publicPath, 0755, true);
+        if (env('R2_BUCKET')) {
+            Storage::disk('r2')->put($path, $file->getContent(), 'public');
+        } else {
+            $publicPath = public_path($folder);
+
+            if (!file_exists($publicPath)) {
+                mkdir($publicPath, 0755, true);
+            }
+
+            $file->move($publicPath, $fileName);
         }
 
-        $file->move($publicPath, $fileName);
-
-        return $folder . '/' . $fileName;
+        return $path;
     }
 
     protected function storageFolder(string $key): string
