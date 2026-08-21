@@ -14,6 +14,14 @@ use Illuminate\Support\Facades\Route;
 /* ----------------------------- Public site ----------------------------- */
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+Route::get('/clear-route-cache', function () {
+    Artisan::call('route:clear');
+    Artisan::cal('view:clear');
+    Artisan::call('cache:clear');
+    Artisan::call('config:clear');
+    return 'Route cache cleared';
+});
+
 Route::get('/services', [PageController::class, 'services'])->name('services');
 Route::get('/projects', [PageController::class, 'projects'])->name('projects');
 Route::get('/projects/{slug}', [PageController::class, 'projectShow'])->name('projects.show');

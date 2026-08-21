@@ -11,6 +11,7 @@ use App\Models\Contact;
 use App\Models\SiteVisit;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 
 class AdminController extends Controller
@@ -99,6 +100,9 @@ class AdminController extends Controller
         // Clear cached settings to ensure fresh data is loaded
         Cache::forget('settings.all');
         Cache::forget('site.settings');
+
+        // Clear compiled Blade views so URL changes (e.g. storage -> public) take effect
+        Artisan::call('view:clear');
 
         return redirect()->route('admin.settings')->with('success', 'Settings saved.');
     }

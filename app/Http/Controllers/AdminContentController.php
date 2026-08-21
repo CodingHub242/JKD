@@ -10,6 +10,7 @@ use App\Models\TeamMember;
 use App\Models\Testimonial;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -141,6 +142,8 @@ class AdminContentController extends Controller
             $item->clients()->sync($request->input('client_ids', []));
         }
 
+        Artisan::call('view:clear');
+
         return redirect()->route('admin.content.index', $type)->with('success', $config['label'] . ' created.');
     }
 
@@ -167,6 +170,8 @@ class AdminContentController extends Controller
         if ($type === 'projects') {
             $item->clients()->sync($request->input('client_ids', []));
         }
+
+        Artisan::call('view:clear');
 
         return redirect()->route('admin.content.index', $type)->with('success', $config['label'] . ' updated.');
     }
@@ -225,6 +230,8 @@ class AdminContentController extends Controller
         $data['progress'] = $data['progress'] ?? 0;
 
         $project->updates()->create($data);
+
+        Artisan::call('view:clear');
 
         return redirect()->route('admin.content.updates', $project->id)->with('success', 'Update posted.');
     }
