@@ -137,7 +137,7 @@
     </section>
 
     {{-- Project video boast --}}
-    <section class="relative overflow-hidden bg-ink-900">
+    <section class="relative overflow-hidden bg-ink-920">
         <div class="absolute inset-0">
             <img src="{{ asset('center.gif') }}" alt="" class="h-full w-full object-cover opacity-30">
         </div>
