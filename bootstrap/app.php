@@ -15,6 +15,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
             'client' => \App\Http\Middleware\EnsureUserIsClient::class,
+            'nocache' => \App\Http\Middleware\NoCache::class,
+        ]);
+
+        $middleware->group('web', [
+            \App\Http\Middleware\NoCache::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

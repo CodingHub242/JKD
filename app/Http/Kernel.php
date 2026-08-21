@@ -5,6 +5,7 @@ protected $middlewareAliases = [
     'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
     'can' => \Illuminate\Auth\Middleware\Authorize::class,
     'guest' => \Illuminate\Auth\Middleware\RedirectIfAuthenticated::class,
+    'nocache' => \App\Http\Middleware\NoCache::class,
     'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
     'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
     'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
