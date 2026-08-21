@@ -183,6 +183,8 @@ class AdminContentController extends Controller
         $item = $model::findOrFail($id);
         $item->delete();
 
+        Artisan::call('view:clear');
+
         return redirect()->route('admin.content.index', $type)->with('success', $config['label'] . ' deleted.');
     }
 
@@ -197,6 +199,8 @@ class AdminContentController extends Controller
         foreach ($request->input('order') as $position => $id) {
             $model::where('id', $id)->update(['sort_order' => $position + 1]);
         }
+
+        Artisan::call('view:clear');
 
         return response()->json(['ok' => true]);
     }
@@ -240,6 +244,8 @@ class AdminContentController extends Controller
     {
         $update = ProjectUpdate::where('project_id', $projectId)->findOrFail($updateId);
         $update->delete();
+
+        Artisan::call('view:clear');
 
         return redirect()->route('admin.content.updates', $projectId)->with('success', 'Update removed.');
     }
