@@ -27,6 +27,8 @@
                         <div class="hero__media" style="background-image:url('{{ $mediaUrl }}'); background-size:cover; background-position:center;"></div>
                     @endif
 
+                    <div class="hero__overlay"></div>
+
                     <div class="hero__content container-x" data-parallax="-0.06">
                         @if($slide->subtitle)<p class="eyebrow reveal">{{ $slide->subtitle }}</p>@endif
                         <h1 class="hero__title reveal reveal-delay-1 mt-5 text-balance">{{ $slide->title }}</h1>
@@ -57,8 +59,6 @@
                 </div>
             </div>
         @endif
-
-        <div class="hero__overlay"></div>
 
         <div class="hero__dots">
             <template x-for="i in count" :key="i">
